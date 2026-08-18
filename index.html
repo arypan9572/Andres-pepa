@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,10 +20,6 @@
       overflow: hidden;
       background: #000;
       font-family: Arial, Helvetica, sans-serif;
-    }
-
-    body {
-      perspective: 1400px;
     }
 
     /* =========================
@@ -129,53 +126,59 @@
 
       overflow: hidden;
 
-      perspective: 1400px;
-
       background: #000;
     }
 
     /*
-      The cube itself fills the screen.
+      Each slide fills the screen.
+      The image itself is NEVER cropped.
     */
 
-    #cube {
+    .slide {
       position: absolute;
       inset: 0;
 
-      transform-style: preserve-3d;
-
-      /*
-        IMPORTANT:
-        The cube transition lasts 3.6 seconds.
-      */
-
-      transition:
-        transform 3.6s cubic-bezier(.77, 0, .18, 1);
-
-      will-change: transform;
-    }
-
-    /* =========================
-       CUBE FACES
-    ========================= */
-
-    .face {
-      position: absolute;
-      inset: 0;
-
-      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
 
       background: #000;
 
-      backface-visibility: hidden;
-      -webkit-backface-visibility: hidden;
+      opacity: 0;
+
+      transition:
+        opacity 1.2s ease,
+        transform 1.2s ease;
+
+      transform: scale(0.96);
+
+      pointer-events: none;
     }
 
-    .face img {
+    .slide.active {
+      opacity: 1;
+
+      transform: scale(1);
+
+      z-index: 2;
+    }
+
+    .slide img {
       display: block;
+
+      /*
+        IMPORTANT:
+        The image can NEVER become larger
+        than the screen.
+
+        contain = no cropping.
+      */
 
       width: 100%;
       height: 100%;
+
+      max-width: 100vw;
+      max-height: 100vh;
 
       object-fit: contain;
 
@@ -183,30 +186,17 @@
 
       user-select: none;
       -webkit-user-drag: none;
-    }
 
-    /*
-      Four sides of the cube.
-    */
+      /*
+        Prevent weird image interpolation
+        from making small pictures look blurry.
+      */
 
-    .front {
-      transform: translateZ(50vw);
-    }
-
-    .right {
-      transform: rotateY(90deg) translateZ(50vw);
-    }
-
-    .back {
-      transform: rotateY(180deg) translateZ(50vw);
-    }
-
-    .left {
-      transform: rotateY(-90deg) translateZ(50vw);
+      image-rendering: auto;
     }
 
     /* =========================
-       SLIDE COUNTER
+       COUNTER
     ========================= */
 
     #counter {
@@ -228,6 +218,31 @@
       font-size: 13px;
 
       opacity: 0.7;
+
+      backdrop-filter: blur(5px);
+    }
+
+    /* =========================
+       LOADING STATUS
+    ========================= */
+
+    #loadStatus {
+      position: fixed;
+
+      left: 20px;
+      bottom: 20px;
+
+      z-index: 100;
+
+      padding: 8px 13px;
+
+      border-radius: 20px;
+
+      color: #aaa;
+
+      background: rgba(0, 0, 0, 0.55);
+
+      font-size: 12px;
 
       backdrop-filter: blur(5px);
     }
@@ -299,27 +314,17 @@
 
   <main id="slideshow">
 
-    <div id="cube">
+    <div class="slide active">
+      <img id="img1" alt="">
+    </div>
 
-      <div class="face front">
-        <img id="imgFront" alt="">
-      </div>
-
-      <div class="face right">
-        <img id="imgRight" alt="">
-      </div>
-
-      <div class="face back">
-        <img id="imgBack" alt="">
-      </div>
-
-      <div class="face left">
-        <img id="imgLeft" alt="">
-      </div>
-
+    <div class="slide">
+      <img id="img2" alt="">
     </div>
 
     <div id="counter"></div>
+
+    <div id="loadStatus"></div>
 
   </main>
 
@@ -371,14 +376,14 @@
     const slideshow =
       document.getElementById("slideshow");
 
-    const cube =
-      document.getElementById("cube");
-
     const bgm =
       document.getElementById("bgm");
 
     const counter =
       document.getElementById("counter");
+
+    const loadStatus =
+      document.getElementById("loadStatus");
 
     const errorBox =
       document.getElementById("error");
@@ -386,21 +391,12 @@
     const errorText =
       document.getElementById("errorText");
 
+    const slideElements =
+      document.querySelectorAll(".slide");
 
-    /* =========================
-       IMAGE ELEMENTS
-    ========================= */
-
-    const images = [
-
-      document.getElementById("imgFront"),
-
-      document.getElementById("imgRight"),
-
-      document.getElementById("imgBack"),
-
-      document.getElementById("imgLeft")
-
+    const slideImages = [
+      document.getElementById("img1"),
+      document.getElementById("img2")
     ];
 
 
@@ -409,18 +405,40 @@
     ========================= */
 
     /*
-      CHANGE EVERY 3 SECONDS
+      How long each picture stays
+      on screen.
+
+      Change this to whatever you want.
+
+      5000 = 5 seconds
+      10000 = 10 seconds
+      etc.
     */
 
-    const SLIDE_TIME = 3000;
+    const SLIDE_TIME = 5000;
 
 
     /*
-      CUBE TRANSITION LASTS
-      3.6 SECONDS
+      Fade duration.
     */
 
-    const TRANSITION_TIME = 3600;
+    const FADE_TIME = 1200;
+
+
+    /*
+      Supported image formats.
+    */
+
+    const ALLOWED_EXTENSIONS = [
+      ".jpg",
+      ".jpeg",
+      ".png",
+      ".gif",
+      ".webp",
+      ".bmp",
+      ".avif",
+      ".svg"
+    ];
 
 
     /* =========================
@@ -431,9 +449,11 @@
 
     let current = 0;
 
-    let rotation = 0;
+    let activeSlide = 0;
 
     let slideshowTimer = null;
+
+    let loadedCount = 0;
 
 
     /* =========================
@@ -451,11 +471,6 @@
           .filter(Boolean);
 
 
-      /*
-        Make sure we're running
-        on GitHub Pages.
-      */
-
       if (!hostname.endsWith(".github.io")) {
 
         throw new Error(
@@ -465,21 +480,17 @@
       }
 
 
-      /*
-        Example:
-
-        username.github.io/repository/
-
-        owner = username
-        repo = repository
-      */
-
       const owner =
         hostname.split(".")[0];
 
 
-      let repo;
+      /*
+        username.github.io
+        OR
+        username.github.io/repository
+      */
 
+      let repo;
 
       if (path.length > 0) {
 
@@ -501,7 +512,25 @@
 
 
     /* =========================
-       LOAD PICTURES
+       CHECK IMAGE
+    ========================= */
+
+    function isImageFile(name) {
+
+      const lower =
+        name.toLowerCase();
+
+
+      return ALLOWED_EXTENSIONS.some(
+        extension =>
+          lower.endsWith(extension)
+      );
+
+    }
+
+
+    /* =========================
+       LOAD EVERYTHING FROM PICS
     ========================= */
 
     async function getPictures() {
@@ -513,12 +542,24 @@
 
 
       /*
-        Ask GitHub for everything
-        inside /pics/
+        IMPORTANT:
+
+        We use GitHub's Git Trees API
+        instead of /contents/pics.
+
+        This lets us find files inside:
+
+        pics/
+        pics/folder/
+        pics/folder/subfolder/
+        etc.
+
+        So you can have as many folders
+        and images as you want.
       */
 
       const apiURL =
-        `https://api.github.com/repos/${owner}/${repo}/contents/pics`;
+        `https://api.github.com/repos/${owner}/${repo}/git/trees/HEAD?recursive=1`;
 
 
       const response =
@@ -528,67 +569,106 @@
       if (!response.ok) {
 
         throw new Error(
-          `GitHub couldn't access the pics folder. Error ${response.status}.`
+          `GitHub couldn't access the repository. Error ${response.status}.`
         );
 
       }
 
 
-      const files =
+      const data =
         await response.json();
 
 
-      /*
-        Supported image formats.
-      */
+      if (!data.tree) {
 
-      const allowedExtensions = [
+        throw new Error(
+          "GitHub returned an invalid repository tree."
+        );
 
-        ".jpg",
-        ".jpeg",
-        ".png",
-        ".gif",
-        ".webp",
-        ".bmp",
-        ".avif"
-
-      ];
+      }
 
 
       /*
-        Keep only image files.
+        Find EVERY file underneath
+        the pics folder.
+
+        This includes subfolders.
       */
 
       pictures =
-        files
+        data.tree
 
           .filter(file => {
 
-            if (file.type !== "file") {
+            /*
+              Only actual files.
+            */
+
+            if (file.type !== "blob") {
               return false;
             }
 
 
-            const name =
-              file.name.toLowerCase();
+            /*
+              Must be inside pics/.
+            */
+
+            if (
+              !file.path.startsWith("pics/")
+            ) {
+              return false;
+            }
 
 
-            return allowedExtensions.some(
-              extension =>
-                name.endsWith(extension)
-            );
+            /*
+              Only supported images.
+            */
+
+            return isImageFile(file.path);
 
           })
 
+          /*
+            Convert repository paths
+            into GitHub Pages URLs.
+          */
 
-          .map(file =>
-            file.download_url
-          );
+          .map(file => {
+
+            return new URL(
+              encodeURI(
+                file.path
+                  .split("/")
+                  .map(part =>
+                    encodeURIComponent(part)
+                  )
+                  .join("/")
+              ),
+              window.location.origin +
+              window.location.pathname
+                .replace(/\/[^/]*$/, "/")
+            ).href;
+
+          });
 
 
       /*
-        Make sure there are pictures.
+        Sort the images so they
+        appear in a predictable order.
       */
+
+      pictures.sort(
+        (a, b) =>
+          a.localeCompare(
+            b,
+            undefined,
+            {
+              numeric: true,
+              sensitivity: "base"
+            }
+          )
+      );
+
 
       if (pictures.length === 0) {
 
@@ -598,84 +678,141 @@
 
       }
 
-    }
 
+      /*
+        Show how many images were found.
+      */
 
-    /* =========================
-       SET IMAGE
-    ========================= */
-
-    function setImage(element, url) {
-
-      element.src = url;
+      loadStatus.textContent =
+        `${pictures.length} pictures found`;
 
     }
 
 
     /* =========================
-       UPDATE COUNTER
+       PRELOAD ALL IMAGES
     ========================= */
 
-    function updateCounter() {
+    async function preloadImages() {
+
+      loadedCount = 0;
+
+
+      const promises =
+        pictures.map(url => {
+
+          return new Promise(resolve => {
+
+            const image =
+              new Image();
+
+
+            image.onload = () => {
+
+              loadedCount++;
+
+              loading.textContent =
+                `Loading pictures... ${loadedCount} / ${pictures.length}`;
+
+              resolve();
+
+            };
+
+
+            image.onerror = () => {
+
+              /*
+                Don't let one broken image
+                stop the entire slideshow.
+              */
+
+              console.warn(
+                "Couldn't load:",
+                url
+              );
+
+              loadedCount++;
+
+              loading.textContent =
+                `Loading pictures... ${loadedCount} / ${pictures.length}`;
+
+              resolve();
+
+            };
+
+
+            image.src = url;
+
+          });
+
+        });
+
+
+      await Promise.all(promises);
+
+    }
+
+
+    /* =========================
+       SHOW IMAGE
+    ========================= */
+
+    function showImage(index) {
+
+      const nextSlide =
+        activeSlide === 0
+          ? 1
+          : 0;
+
+
+      /*
+        Put the next picture
+        into the hidden slide.
+      */
+
+      slideImages[nextSlide].src =
+        pictures[index];
+
+
+      /*
+        Update counter.
+      */
 
       counter.textContent =
-        `${current + 1} / ${pictures.length}`;
+        `${index + 1} / ${pictures.length}`;
+
+
+      /*
+        Activate the new slide.
+      */
+
+      slideElements[activeSlide]
+        .classList
+        .remove("active");
+
+
+      slideElements[nextSlide]
+        .classList
+        .add("active");
+
+
+      activeSlide =
+        nextSlide;
 
     }
 
 
     /* =========================
-       PREPARE CUBE
-    ========================= */
-
-    function prepareFaces() {
-
-      setImage(
-        images[0],
-        pictures[current]
-      );
-
-
-      setImage(
-        images[1],
-        pictures[
-          (current + 1) %
-          pictures.length
-        ]
-      );
-
-
-      setImage(
-        images[2],
-        pictures[
-          (current + 2) %
-          pictures.length
-        ]
-      );
-
-
-      setImage(
-        images[3],
-        pictures[
-          (current + 3) %
-          pictures.length
-        ]
-      );
-
-
-      updateCounter();
-
-    }
-
-
-    /* =========================
-       NEXT SLIDE
+       NEXT IMAGE
     ========================= */
 
     function nextSlide() {
 
       /*
-        Move to next image.
+        Move forward exactly one image.
+
+        When we reach the end,
+        go back to image #1.
       */
 
       current++;
@@ -687,33 +824,35 @@
       }
 
 
-      /*
-        Rotate the cube another
-        90 degrees.
-      */
+      showImage(current);
 
-      rotation -= 90;
+    }
 
 
-      cube.style.transform =
-        `rotateY(${rotation}deg)`;
+    /* =========================
+       START SLIDESHOW TIMER
+    ========================= */
 
-
-      updateCounter();
-
+    function startSlideshow() {
 
       /*
-        The slide changes every
-        3 seconds.
-
-        The transition lasts
-        3.6 seconds.
-
-        Therefore the next
-        transition can begin
-        before the previous one
-        has completely finished.
+        Clear an old timer if one exists.
       */
+
+      if (slideshowTimer) {
+
+        clearInterval(
+          slideshowTimer
+        );
+
+      }
+
+
+      slideshowTimer =
+        setInterval(
+          nextSlide,
+          SLIDE_TIME
+        );
 
     }
 
@@ -726,10 +865,6 @@
 
       try {
 
-        /*
-          Show loading.
-        */
-
         playButton.style.display =
           "none";
 
@@ -738,32 +873,81 @@
 
 
         /*
-          Load every image
-          inside /pics/.
+          Find every picture
+          recursively.
         */
 
         await getPictures();
 
 
         /*
-          Put the first images
-          onto the cube.
+          Preload every picture
+          before starting.
+
+          This prevents blank frames
+          while the slideshow is running.
         */
 
-        prepareFaces();
+        await preloadImages();
 
 
         /*
-          Start background music.
+          Show the first image.
+        */
 
-          This happens because
-          start() was triggered
-          by the user's Play click.
+        current = 0;
+
+        activeSlide = 0;
+
+
+        slideImages[0].src =
+          pictures[0];
+
+
+        slideImages[1].src =
+          pictures[
+            pictures.length > 1
+              ? 1
+              : 0
+          ];
+
+
+        slideElements[0]
+          .classList
+          .add("active");
+
+
+        slideElements[1]
+          .classList
+          .remove("active");
+
+
+        counter.textContent =
+          `1 / ${pictures.length}`;
+
+
+        /*
+          Start music.
+
+          Because this function was triggered
+          by the user's click, browsers should
+          allow the audio to play.
         */
 
         bgm.currentTime = 0;
 
-        await bgm.play();
+        try {
+
+          await bgm.play();
+
+        } catch (audioError) {
+
+          console.warn(
+            "Music couldn't autoplay:",
+            audioError
+          );
+
+        }
 
 
         /*
@@ -783,14 +967,11 @@
 
 
         /*
-          NEW IMAGE EVERY 3 SECONDS.
+          Start cycling through
+          EVERY image.
         */
 
-        slideshowTimer =
-          setInterval(
-            nextSlide,
-            SLIDE_TIME
-          );
+        startSlideshow();
 
 
       } catch (error) {
@@ -798,12 +979,9 @@
         console.error(error);
 
 
-        /*
-          Show the error.
-        */
-
         loading.style.display =
           "none";
+
 
         playButton.style.display =
           "block";
@@ -835,18 +1013,69 @@
        PREVENT IMAGE DRAGGING
     ========================= */
 
-    images.forEach(image => {
+    slideImages.forEach(image => {
 
       image.addEventListener(
         "dragstart",
         event => {
+
           event.preventDefault();
+
         }
       );
 
     });
 
+
+    /* =========================
+       KEYBOARD CONTROLS
+    ========================= */
+
+    document.addEventListener(
+      "keydown",
+      event => {
+
+        /*
+          Left arrow = previous.
+        */
+
+        if (
+          event.key === "ArrowLeft" &&
+          pictures.length > 0
+        ) {
+
+          current--;
+
+          if (current < 0) {
+
+            current =
+              pictures.length - 1;
+
+          }
+
+          showImage(current);
+
+        }
+
+
+        /*
+          Right arrow = next.
+        */
+
+        if (
+          event.key === "ArrowRight" &&
+          pictures.length > 0
+        ) {
+
+          nextSlide();
+
+        }
+
+      }
+    );
+
   </script>
 
 </body>
 </html>
+```
