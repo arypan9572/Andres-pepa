@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Andres Peppa</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: #000;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      perspective: 1400px;
+    }
+
+    /* =========================
+       START SCREEN
+    ========================= */
+
+    #startScreen {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+
+      color: white;
+
+      background:
+        radial-gradient(
+          circle at center,
+          #292929 0%,
+          #0a0a0a 55%,
+          #000 100%
+        );
+    }
+
+    #startScreen h1 {
+      margin: 0;
+
+      font-size: clamp(48px, 10vw, 120px);
+      font-weight: 900;
+      letter-spacing: -6px;
+      text-align: center;
+
+      text-shadow:
+        0 0 20px rgba(255,255,255,0.12);
+    }
+
+    #startScreen p {
+      margin: 18px 0 28px;
+
+      color: #aaa;
+      font-size: 16px;
+      letter-spacing: 1px;
+    }
+
+    #playButton {
+      border: none;
+      outline: none;
+
+      padding: 18px 48px;
+
+      border-radius: 999px;
+
+      color: white;
+      background: #ff1744;
+
+      font-size: 20px;
+      font-weight: bold;
+
+      cursor: pointer;
+
+      box-shadow:
+        0 0 30px rgba(255, 23, 68, 0.45);
+
+      transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease;
+    }
+
+    #playButton:hover {
+      transform: scale(1.08);
+
+      background: #ff4565;
+
+      box-shadow:
+        0 0 45px rgba(255, 23, 68, 0.65);
+    }
+
+    #playButton:active {
+      transform: scale(0.97);
+    }
+
+    #loading {
+      display: none;
+
+      margin-top: 20px;
+
+      color: #999;
+      font-size: 14px;
+    }
+
+    /* =========================
+       SLIDESHOW
+    ========================= */
+
+    #slideshow {
+      position: fixed;
+      inset: 0;
+
+      display: none;
+
+      overflow: hidden;
+
+      perspective: 1400px;
+
+      background: #000;
+    }
+
+    /*
+      The cube itself fills the screen.
+    */
+
+    #cube {
+      position: absolute;
+      inset: 0;
+
+      transform-style: preserve-3d;
+
+      /*
+        IMPORTANT:
+        The cube transition lasts 3.6 seconds.
+      */
+
+      transition:
+        transform 3.6s cubic-bezier(.77, 0, .18, 1);
+
+      will-change: transform;
+    }
+
+    /* =========================
+       CUBE FACES
+    ========================= */
+
+    .face {
+      position: absolute;
+      inset: 0;
+
+      overflow: hidden;
+
+      background: #000;
+
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
+
+    .face img {
+      display: block;
+
+      width: 100%;
+      height: 100%;
+
+      object-fit: contain;
+
+      background: #000;
+
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    /*
+      Four sides of the cube.
+    */
+
+    .front {
+      transform: translateZ(50vw);
+    }
+
+    .right {
+      transform: rotateY(90deg) translateZ(50vw);
+    }
+
+    .back {
+      transform: rotateY(180deg) translateZ(50vw);
+    }
+
+    .left {
+      transform: rotateY(-90deg) translateZ(50vw);
+    }
+
+    /* =========================
+       SLIDE COUNTER
+    ========================= */
+
+    #counter {
+      position: fixed;
+
+      right: 20px;
+      bottom: 20px;
+
+      z-index: 100;
+
+      padding: 8px 13px;
+
+      border-radius: 20px;
+
+      color: white;
+
+      background: rgba(0, 0, 0, 0.55);
+
+      font-size: 13px;
+
+      opacity: 0.7;
+
+      backdrop-filter: blur(5px);
+    }
+
+    /* =========================
+       ERROR SCREEN
+    ========================= */
+
+    #error {
+      position: fixed;
+      inset: 0;
+
+      z-index: 2000;
+
+      display: none;
+
+      justify-content: center;
+      align-items: center;
+
+      padding: 30px;
+
+      color: white;
+      background: #000;
+
+      text-align: center;
+    }
+
+    #error div {
+      max-width: 600px;
+    }
+
+    #error h2 {
+      margin-bottom: 10px;
+    }
+
+    #error p {
+      color: #aaa;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- =========================
+       START SCREEN
+  ========================= -->
+
+  <section id="startScreen">
+
+    <h1>ANDRES PEPPA</h1>
+
+    <p>Click play to begin.</p>
+
+    <button id="playButton">
+      ▶ PLAY
+    </button>
+
+    <div id="loading">
+      Loading pictures...
+    </div>
+
+  </section>
+
+
+  <!-- =========================
+       SLIDESHOW
+  ========================= -->
+
+  <main id="slideshow">
+
+    <div id="cube">
+
+      <div class="face front">
+        <img id="imgFront" alt="">
+      </div>
+
+      <div class="face right">
+        <img id="imgRight" alt="">
+      </div>
+
+      <div class="face back">
+        <img id="imgBack" alt="">
+      </div>
+
+      <div class="face left">
+        <img id="imgLeft" alt="">
+      </div>
+
+    </div>
+
+    <div id="counter"></div>
+
+  </main>
+
+
+  <!-- =========================
+       ERROR
+  ========================= -->
+
+  <div id="error">
+
+    <div>
+
+      <h2>Couldn't load the pictures.</h2>
+
+      <p id="errorText"></p>
+
+    </div>
+
+  </div>
+
+
+  <!-- =========================
+       BACKGROUND MUSIC
+  ========================= -->
+
+  <audio
+    id="bgm"
+    src="bgm.mp3"
+    preload="auto"
+    loop>
+  </audio>
+
+
+  <script>
+
+    /* =========================
+       ELEMENTS
+    ========================= */
+
+    const playButton =
+      document.getElementById("playButton");
+
+    const startScreen =
+      document.getElementById("startScreen");
+
+    const loading =
+      document.getElementById("loading");
+
+    const slideshow =
+      document.getElementById("slideshow");
+
+    const cube =
+      document.getElementById("cube");
+
+    const bgm =
+      document.getElementById("bgm");
+
+    const counter =
+      document.getElementById("counter");
+
+    const errorBox =
+      document.getElementById("error");
+
+    const errorText =
+      document.getElementById("errorText");
+
+
+    /* =========================
+       IMAGE ELEMENTS
+    ========================= */
+
+    const images = [
+
+      document.getElementById("imgFront"),
+
+      document.getElementById("imgRight"),
+
+      document.getElementById("imgBack"),
+
+      document.getElementById("imgLeft")
+
+    ];
+
+
+    /* =========================
+       SETTINGS
+    ========================= */
+
+    /*
+      CHANGE EVERY 3 SECONDS
+    */
+
+    const SLIDE_TIME = 3000;
+
+
+    /*
+      CUBE TRANSITION LASTS
+      3.6 SECONDS
+    */
+
+    const TRANSITION_TIME = 3600;
+
+
+    /* =========================
+       VARIABLES
+    ========================= */
+
+    let pictures = [];
+
+    let current = 0;
+
+    let rotation = 0;
+
+    let slideshowTimer = null;
+
+
+    /* =========================
+       FIND GITHUB REPOSITORY
+    ========================= */
+
+    function getRepositoryInfo() {
+
+      const hostname =
+        window.location.hostname;
+
+      const path =
+        window.location.pathname
+          .split("/")
+          .filter(Boolean);
+
+
+      /*
+        Make sure we're running
+        on GitHub Pages.
+      */
+
+      if (!hostname.endsWith(".github.io")) {
+
+        throw new Error(
+          "This slideshow needs to be opened through GitHub Pages."
+        );
+
+      }
+
+
+      /*
+        Example:
+
+        username.github.io/repository/
+
+        owner = username
+        repo = repository
+      */
+
+      const owner =
+        hostname.split(".")[0];
+
+
+      let repo;
+
+
+      if (path.length > 0) {
+
+        repo = path[0];
+
+      } else {
+
+        repo = `${owner}.github.io`;
+
+      }
+
+
+      return {
+        owner,
+        repo
+      };
+
+    }
+
+
+    /* =========================
+       LOAD PICTURES
+    ========================= */
+
+    async function getPictures() {
+
+      const {
+        owner,
+        repo
+      } = getRepositoryInfo();
+
+
+      /*
+        Ask GitHub for everything
+        inside /pics/
+      */
+
+      const apiURL =
+        `https://api.github.com/repos/${owner}/${repo}/contents/pics`;
+
+
+      const response =
+        await fetch(apiURL);
+
+
+      if (!response.ok) {
+
+        throw new Error(
+          `GitHub couldn't access the pics folder. Error ${response.status}.`
+        );
+
+      }
+
+
+      const files =
+        await response.json();
+
+
+      /*
+        Supported image formats.
+      */
+
+      const allowedExtensions = [
+
+        ".jpg",
+        ".jpeg",
+        ".png",
+        ".gif",
+        ".webp",
+        ".bmp",
+        ".avif"
+
+      ];
+
+
+      /*
+        Keep only image files.
+      */
+
+      pictures =
+        files
+
+          .filter(file => {
+
+            if (file.type !== "file") {
+              return false;
+            }
+
+
+            const name =
+              file.name.toLowerCase();
+
+
+            return allowedExtensions.some(
+              extension =>
+                name.endsWith(extension)
+            );
+
+          })
+
+
+          .map(file =>
+            file.download_url
+          );
+
+
+      /*
+        Make sure there are pictures.
+      */
+
+      if (pictures.length === 0) {
+
+        throw new Error(
+          "No supported images were found inside the pics folder."
+        );
+
+      }
+
+    }
+
+
+    /* =========================
+       SET IMAGE
+    ========================= */
+
+    function setImage(element, url) {
+
+      element.src = url;
+
+    }
+
+
+    /* =========================
+       UPDATE COUNTER
+    ========================= */
+
+    function updateCounter() {
+
+      counter.textContent =
+        `${current + 1} / ${pictures.length}`;
+
+    }
+
+
+    /* =========================
+       PREPARE CUBE
+    ========================= */
+
+    function prepareFaces() {
+
+      setImage(
+        images[0],
+        pictures[current]
+      );
+
+
+      setImage(
+        images[1],
+        pictures[
+          (current + 1) %
+          pictures.length
+        ]
+      );
+
+
+      setImage(
+        images[2],
+        pictures[
+          (current + 2) %
+          pictures.length
+        ]
+      );
+
+
+      setImage(
+        images[3],
+        pictures[
+          (current + 3) %
+          pictures.length
+        ]
+      );
+
+
+      updateCounter();
+
+    }
+
+
+    /* =========================
+       NEXT SLIDE
+    ========================= */
+
+    function nextSlide() {
+
+      /*
+        Move to next image.
+      */
+
+      current++;
+
+      if (current >= pictures.length) {
+
+        current = 0;
+
+      }
+
+
+      /*
+        Rotate the cube another
+        90 degrees.
+      */
+
+      rotation -= 90;
+
+
+      cube.style.transform =
+        `rotateY(${rotation}deg)`;
+
+
+      updateCounter();
+
+
+      /*
+        The slide changes every
+        3 seconds.
+
+        The transition lasts
+        3.6 seconds.
+
+        Therefore the next
+        transition can begin
+        before the previous one
+        has completely finished.
+      */
+
+    }
+
+
+    /* =========================
+       START
+    ========================= */
+
+    async function start() {
+
+      try {
+
+        /*
+          Show loading.
+        */
+
+        playButton.style.display =
+          "none";
+
+        loading.style.display =
+          "block";
+
+
+        /*
+          Load every image
+          inside /pics/.
+        */
+
+        await getPictures();
+
+
+        /*
+          Put the first images
+          onto the cube.
+        */
+
+        prepareFaces();
+
+
+        /*
+          Start background music.
+
+          This happens because
+          start() was triggered
+          by the user's Play click.
+        */
+
+        bgm.currentTime = 0;
+
+        await bgm.play();
+
+
+        /*
+          Hide start screen.
+        */
+
+        startScreen.style.display =
+          "none";
+
+
+        /*
+          Show slideshow.
+        */
+
+        slideshow.style.display =
+          "block";
+
+
+        /*
+          NEW IMAGE EVERY 3 SECONDS.
+        */
+
+        slideshowTimer =
+          setInterval(
+            nextSlide,
+            SLIDE_TIME
+          );
+
+
+      } catch (error) {
+
+        console.error(error);
+
+
+        /*
+          Show the error.
+        */
+
+        loading.style.display =
+          "none";
+
+        playButton.style.display =
+          "block";
+
+
+        errorBox.style.display =
+          "flex";
+
+
+        errorText.textContent =
+          error.message;
+
+      }
+
+    }
+
+
+    /* =========================
+       PLAY BUTTON
+    ========================= */
+
+    playButton.addEventListener(
+      "click",
+      start
+    );
+
+
+    /* =========================
+       PREVENT IMAGE DRAGGING
+    ========================= */
+
+    images.forEach(image => {
+
+      image.addEventListener(
+        "dragstart",
+        event => {
+          event.preventDefault();
+        }
+      );
+
+    });
+
+  </script>
+
+</body>
+</html>
