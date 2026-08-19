@@ -128,11 +128,6 @@
       background: #000;
     }
 
-    /*
-      Each slide fills the screen.
-      The image itself is NEVER cropped.
-    */
-
     .slide {
       position: absolute;
       inset: 0;
@@ -165,14 +160,6 @@
     .slide img {
       display: block;
 
-      /*
-        IMPORTANT:
-        The image can NEVER become larger
-        than the screen.
-
-        contain = no cropping.
-      */
-
       width: 100%;
       height: 100%;
 
@@ -185,11 +172,6 @@
 
       user-select: none;
       -webkit-user-drag: none;
-
-      /*
-        Prevent weird image interpolation
-        from making small pictures look blurry.
-      */
 
       image-rendering: auto;
     }
@@ -270,16 +252,34 @@
     }
 
     #error div {
-      max-width: 600px;
+      max-width: 650px;
     }
 
     #error h2 {
       margin-bottom: 10px;
+      font-size: 30px;
     }
 
     #error p {
       color: #aaa;
       line-height: 1.6;
+    }
+
+    #error code {
+      display: block;
+
+      margin-top: 20px;
+      padding: 15px;
+
+      border-radius: 10px;
+
+      color: #ff6b81;
+      background: #151515;
+
+      font-family: monospace;
+      font-size: 13px;
+
+      word-break: break-all;
     }
   </style>
 </head>
@@ -340,6 +340,8 @@
 
       <p id="errorText"></p>
 
+      <code id="errorURL"></code>
+
     </div>
 
   </div>
@@ -390,6 +392,9 @@
     const errorText =
       document.getElementById("errorText");
 
+    const errorURL =
+      document.getElementById("errorURL");
+
     const slideElements =
       document.querySelectorAll(".slide");
 
@@ -407,21 +412,12 @@
       How long each picture stays
       on screen.
 
-      Change this to whatever you want.
-
       5000 = 5 seconds
       10000 = 10 seconds
       etc.
     */
 
     const SLIDE_TIME = 5000;
-
-
-    /*
-      Fade duration.
-    */
-
-    const FADE_TIME = 1200;
 
 
     /*
@@ -470,6 +466,11 @@
           .filter(Boolean);
 
 
+      /*
+        This slideshow is designed
+        for GitHub Pages.
+      */
+
       if (!hostname.endsWith(".github.io")) {
 
         throw new Error(
@@ -511,6 +512,62 @@
 
 
     /* =========================
+       FIND GITHUB PAGES BASE PATH
+    ========================= */
+
+    function getBasePath() {
+
+      let pathname =
+        window.location.pathname;
+
+
+      /*
+        If the page is:
+
+        /my-repo/
+
+        use:
+
+        /my-repo/
+      */
+
+      if (pathname.endsWith("/")) {
+
+        return pathname;
+
+      }
+
+
+      /*
+        If the page is:
+
+        /my-repo/index.html
+
+        use:
+
+        /my-repo/
+      */
+
+      const lastSlash =
+        pathname.lastIndexOf("/");
+
+
+      if (lastSlash === -1) {
+
+        return "/";
+
+      }
+
+
+      return pathname.substring(
+        0,
+        lastSlash + 1
+      );
+
+    }
+
+
+    /* =========================
        CHECK IMAGE
     ========================= */
 
@@ -541,24 +598,18 @@
 
 
       /*
-        IMPORTANT:
+        GitHub API.
 
-        We use GitHub's Git Trees API
-        instead of /contents/pics.
-
-        This lets us find files inside:
-
-        pics/
-        pics/folder/
-        pics/folder/subfolder/
-        etc.
-
-        So you can have as many folders
-        and images as you want.
+        This recursively searches
+        the entire repository.
       */
 
       const apiURL =
         `https://api.github.com/repos/${owner}/${repo}/git/trees/HEAD?recursive=1`;
+
+
+      loadStatus.textContent =
+        "Finding pictures...";
 
 
       const response =
@@ -566,6 +617,24 @@
 
 
       if (!response.ok) {
+
+        if (response.status === 404) {
+
+          throw new Error(
+            `GitHub could not find the repository "${owner}/${repo}".`
+          );
+
+        }
+
+
+        if (response.status === 403) {
+
+          throw new Error(
+            "GitHub API rate limit reached. Please try again later."
+          );
+
+        }
+
 
         throw new Error(
           `GitHub couldn't access the repository. Error ${response.status}.`
@@ -588,72 +657,109 @@
 
 
       /*
-        Find EVERY file underneath
-        the pics folder.
+        Find EVERY image inside pics/.
 
-        This includes subfolders.
+        This includes:
+
+        pics/image.jpg
+
+        pics/folder/image.jpg
+
+        pics/folder/subfolder/image.png
       */
 
-      pictures =
-        data.tree
-
-          .filter(file => {
-
-            /*
-              Only actual files.
-            */
-
-            if (file.type !== "blob") {
-              return false;
-            }
-
-
-            /*
-              Must be inside pics/.
-            */
-
-            if (
-              !file.path.startsWith("pics/")
-            ) {
-              return false;
-            }
-
-
-            /*
-              Only supported images.
-            */
-
-            return isImageFile(file.path);
-
-          })
+      const imageFiles =
+        data.tree.filter(file => {
 
           /*
-            Convert repository paths
-            into GitHub Pages URLs.
+            Must be a real file.
           */
 
-          .map(file => {
+          if (file.type !== "blob") {
 
-            return new URL(
-              encodeURI(
-                file.path
-                  .split("/")
-                  .map(part =>
-                    encodeURIComponent(part)
-                  )
-                  .join("/")
-              ),
-              window.location.origin +
-              window.location.pathname
-                .replace(/\/[^/]*$/, "/")
-            ).href;
+            return false;
 
-          });
+          }
+
+
+          /*
+            Must be inside pics/.
+          */
+
+          if (!file.path.startsWith("pics/")) {
+
+            return false;
+
+          }
+
+
+          /*
+            Must have a supported
+            image extension.
+          */
+
+          return isImageFile(file.path);
+
+        });
 
 
       /*
-        Sort the images so they
-        appear in a predictable order.
+        Get the actual GitHub Pages
+        base path.
+
+        Example:
+
+        https://username.github.io/
+          -> /
+
+        https://username.github.io/my-repo/
+          -> /my-repo/
+      */
+
+      const basePath =
+        getBasePath();
+
+
+      /*
+        Convert repository paths
+        into GitHub Pages URLs.
+      */
+
+      pictures =
+        imageFiles.map(file => {
+
+          const encodedPath =
+            file.path
+              .split("/")
+              .map(part =>
+                encodeURIComponent(part)
+              )
+              .join("/");
+
+
+          return (
+            window.location.origin +
+            basePath +
+            encodedPath
+          );
+
+        });
+
+
+      /*
+        Sort naturally.
+
+        1.jpg
+        2.jpg
+        3.jpg
+        10.jpg
+
+        instead of:
+
+        1.jpg
+        10.jpg
+        2.jpg
+        3.jpg
       */
 
       pictures.sort(
@@ -678,10 +784,6 @@
       }
 
 
-      /*
-        Show how many images were found.
-      */
-
       loadStatus.textContent =
         `${pictures.length} pictures found`;
 
@@ -697,6 +799,9 @@
       loadedCount = 0;
 
 
+      const validPictures = [];
+
+
       const promises =
         pictures.map(url => {
 
@@ -706,9 +811,15 @@
               new Image();
 
 
+            /*
+              Successful image.
+            */
+
             image.onload = () => {
 
               loadedCount++;
+
+              validPictures.push(url);
 
               loading.textContent =
                 `Loading pictures... ${loadedCount} / ${pictures.length}`;
@@ -718,15 +829,17 @@
             };
 
 
+            /*
+              Failed image.
+
+              Don't let one bad image
+              stop the entire slideshow.
+            */
+
             image.onerror = () => {
 
-              /*
-                Don't let one broken image
-                stop the entire slideshow.
-              */
-
               console.warn(
-                "Couldn't load:",
+                "Couldn't load image:",
                 url
               );
 
@@ -749,6 +862,33 @@
 
       await Promise.all(promises);
 
+
+      /*
+        Keep ONLY images that
+        actually loaded.
+      */
+
+      pictures =
+        validPictures;
+
+
+      /*
+        If absolutely nothing loaded,
+        show an error.
+      */
+
+      if (pictures.length === 0) {
+
+        throw new Error(
+          "The pics folder was found, but none of the images could be loaded."
+        );
+
+      }
+
+
+      loadStatus.textContent =
+        `${pictures.length} pictures loaded`;
+
     }
 
 
@@ -758,6 +898,13 @@
 
     function showImage(index) {
 
+      if (pictures.length === 0) {
+
+        return;
+
+      }
+
+
       const nextSlide =
         activeSlide === 0
           ? 1
@@ -765,7 +912,7 @@
 
 
       /*
-        Put the next picture
+        Put the requested picture
         into the hidden slide.
       */
 
@@ -782,13 +929,17 @@
 
 
       /*
-        Activate the new slide.
+        Fade out current slide.
       */
 
       slideElements[activeSlide]
         .classList
         .remove("active");
 
+
+      /*
+        Fade in new slide.
+      */
 
       slideElements[nextSlide]
         .classList
@@ -807,18 +958,48 @@
 
     function nextSlide() {
 
-      /*
-        Move forward exactly one image.
+      if (pictures.length === 0) {
 
-        When we reach the end,
-        go back to image #1.
-      */
+        return;
+
+      }
+
 
       current++;
+
 
       if (current >= pictures.length) {
 
         current = 0;
+
+      }
+
+
+      showImage(current);
+
+    }
+
+
+    /* =========================
+       PREVIOUS IMAGE
+    ========================= */
+
+    function previousSlide() {
+
+      if (pictures.length === 0) {
+
+        return;
+
+      }
+
+
+      current--;
+
+
+      if (current < 0) {
+
+        current =
+          pictures.length - 1;
 
       }
 
@@ -835,7 +1016,7 @@
     function startSlideshow() {
 
       /*
-        Clear an old timer if one exists.
+        Clear old timer.
       */
 
       if (slideshowTimer) {
@@ -864,34 +1045,37 @@
 
       try {
 
+        /*
+          Disable the button while
+          everything loads.
+        */
+
         playButton.style.display =
           "none";
 
         loading.style.display =
           "block";
 
+        errorBox.style.display =
+          "none";
+
 
         /*
-          Find every picture
-          recursively.
+          Find every image.
         */
 
         await getPictures();
 
 
         /*
-          Preload every picture
-          before starting.
-
-          This prevents blank frames
-          while the slideshow is running.
+          Preload every image.
         */
 
         await preloadImages();
 
 
         /*
-          Show the first image.
+          Start from the first image.
         */
 
         current = 0;
@@ -899,9 +1083,22 @@
         activeSlide = 0;
 
 
+        /*
+          Put first image into
+          first slide.
+        */
+
         slideImages[0].src =
           pictures[0];
 
+
+        /*
+          Put second image into
+          second slide.
+
+          If there's only one image,
+          reuse the first one.
+        */
 
         slideImages[1].src =
           pictures[
@@ -910,6 +1107,11 @@
               : 0
           ];
 
+
+        /*
+          Make sure first slide
+          is visible.
+        */
 
         slideElements[0]
           .classList
@@ -921,19 +1123,24 @@
           .remove("active");
 
 
+        /*
+          Counter.
+        */
+
         counter.textContent =
           `1 / ${pictures.length}`;
 
 
         /*
-          Start music.
+          Play music.
 
-          Because this function was triggered
-          by the user's click, browsers should
-          allow the audio to play.
+          Because this function runs
+          from the Play button click,
+          browsers normally allow playback.
         */
 
         bgm.currentTime = 0;
+
 
         try {
 
@@ -966,16 +1173,17 @@
 
 
         /*
-          Start cycling through
-          EVERY image.
+          Start changing images.
         */
 
         startSlideshow();
 
-
       } catch (error) {
 
-        console.error(error);
+        console.error(
+          "Slideshow error:",
+          error
+        );
 
 
         loading.style.display =
@@ -992,6 +1200,24 @@
 
         errorText.textContent =
           error.message;
+
+
+        /*
+          If we have an image URL,
+          show it to make debugging easier.
+        */
+
+        if (pictures.length > 0) {
+
+          errorURL.textContent =
+            pictures[0];
+
+        } else {
+
+          errorURL.textContent =
+            "";
+
+        }
 
       }
 
@@ -1043,16 +1269,7 @@
           pictures.length > 0
         ) {
 
-          current--;
-
-          if (current < 0) {
-
-            current =
-              pictures.length - 1;
-
-          }
-
-          showImage(current);
+          previousSlide();
 
         }
 
