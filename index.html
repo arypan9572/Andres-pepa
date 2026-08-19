@@ -126,7 +126,45 @@
       overflow: hidden;
 
       background: #000;
+
+      /*
+        This is the perspective
+        that makes the cube effect
+        look three-dimensional.
+      */
+      perspective: 1800px;
+      perspective-origin: center center;
     }
+
+    /*
+      This container is responsible
+      for the actual 3D cube rotation.
+    */
+
+    #cube {
+      position: absolute;
+      inset: 0;
+
+      transform-style: preserve-3d;
+
+      /*
+        Start with no rotation.
+      */
+
+      transform:
+        translateZ(0)
+        rotateY(0deg);
+
+      will-change: transform;
+    }
+
+    /*
+      Every slide is positioned on
+      top of the other.
+
+      During a transition, one rotates
+      away while the other rotates in.
+    */
 
     .slide {
       position: absolute;
@@ -140,20 +178,18 @@
 
       opacity: 0;
 
-      transition:
-        opacity 1.2s ease,
-        transform 1.2s ease;
-
-      transform: scale(0.96);
-
       pointer-events: none;
+
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+
+      transform-style: preserve-3d;
+
+      overflow: hidden;
     }
 
     .slide.active {
       opacity: 1;
-
-      transform: scale(1);
-
       z-index: 2;
     }
 
@@ -174,6 +210,208 @@
       -webkit-user-drag: none;
 
       image-rendering: auto;
+    }
+
+    /*
+      The dark edge/shadow makes the
+      rotation feel more like a real
+      3D cube rather than a flat spin.
+    */
+
+    .slide::after {
+      content: "";
+
+      position: absolute;
+      inset: 0;
+
+      pointer-events: none;
+
+      background:
+        linear-gradient(
+          90deg,
+          rgba(0,0,0,0.30),
+          transparent 20%,
+          transparent 80%,
+          rgba(0,0,0,0.30)
+        );
+
+      opacity: 0;
+
+      transition: opacity 0.2s linear;
+    }
+
+    /* =========================
+       CUBE TRANSITION
+    ========================= */
+
+    /*
+      Google-Slides-style cube duration.
+
+      3.6 seconds = 3600ms.
+    */
+
+    .cube-transition {
+      animation:
+        cubeRotate
+        3.6s
+        cubic-bezier(0.45, 0, 0.25, 1)
+        forwards;
+    }
+
+    /*
+      The outgoing image rotates
+      90 degrees away.
+
+      The incoming image rotates
+      90 degrees into position.
+    */
+
+    .slide.cube-out-right {
+      animation:
+        cubeOutRight
+        3.6s
+        cubic-bezier(0.45, 0, 0.25, 1)
+        forwards;
+    }
+
+    .slide.cube-in-right {
+      animation:
+        cubeInRight
+        3.6s
+        cubic-bezier(0.45, 0, 0.25, 1)
+        forwards;
+    }
+
+    .slide.cube-out-left {
+      animation:
+        cubeOutLeft
+        3.6s
+        cubic-bezier(0.45, 0, 0.25, 1)
+        forwards;
+    }
+
+    .slide.cube-in-left {
+      animation:
+        cubeInLeft
+        3.6s
+        cubic-bezier(0.45, 0, 0.25, 1)
+        forwards;
+    }
+
+    /*
+      Rotate clockwise.
+    */
+
+    @keyframes cubeOutRight {
+
+      0% {
+        transform:
+          translateX(0)
+          rotateY(0deg);
+
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 1;
+      }
+
+      100% {
+        transform:
+          translateX(-50%)
+          rotateY(-90deg);
+
+        opacity: 0;
+      }
+
+    }
+
+    @keyframes cubeInRight {
+
+      0% {
+        transform:
+          translateX(50%)
+          rotateY(90deg);
+
+        opacity: 0;
+      }
+
+      50% {
+        opacity: 1;
+      }
+
+      100% {
+        transform:
+          translateX(0)
+          rotateY(0deg);
+
+        opacity: 1;
+      }
+
+    }
+
+    /*
+      Rotate counter-clockwise.
+    */
+
+    @keyframes cubeOutLeft {
+
+      0% {
+        transform:
+          translateX(0)
+          rotateY(0deg);
+
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 1;
+      }
+
+      100% {
+        transform:
+          translateX(50%)
+          rotateY(90deg);
+
+        opacity: 0;
+      }
+
+    }
+
+    @keyframes cubeInLeft {
+
+      0% {
+        transform:
+          translateX(-50%)
+          rotateY(-90deg);
+
+        opacity: 0;
+      }
+
+      50% {
+        opacity: 1;
+      }
+
+      100% {
+        transform:
+          translateX(0)
+          rotateY(0deg);
+
+        opacity: 1;
+      }
+
+    }
+
+    /*
+      Add shadows while the cube is rotating.
+    */
+
+    .cube-shadow-out::after {
+      opacity: 0.75;
+    }
+
+    .cube-shadow-in::after {
+      opacity: 0.45;
     }
 
     /* =========================
@@ -281,6 +519,48 @@
 
       word-break: break-all;
     }
+
+    /* =========================
+       MOBILE
+    ========================= */
+
+    @media (max-width: 600px) {
+
+      #startScreen h1 {
+        letter-spacing: -3px;
+      }
+
+      #playButton {
+        padding: 16px 38px;
+      }
+
+      #counter {
+        right: 10px;
+        bottom: 10px;
+      }
+
+      #loadStatus {
+        left: 10px;
+        bottom: 10px;
+      }
+
+    }
+
+    /* =========================
+       REDUCE MOTION
+    ========================= */
+
+    @media (prefers-reduced-motion: reduce) {
+
+      .cube-transition,
+      .slide.cube-out-right,
+      .slide.cube-in-right,
+      .slide.cube-out-left,
+      .slide.cube-in-left {
+        animation-duration: 0.01ms !important;
+      }
+
+    }
   </style>
 </head>
 
@@ -313,13 +593,18 @@
 
   <main id="slideshow">
 
-    <div class="slide active">
-      <img id="img1" alt="">
+    <div id="cube">
+
+      <div class="slide active">
+        <img id="img1" alt="">
+      </div>
+
+      <div class="slide">
+        <img id="img2" alt="">
+      </div>
+
     </div>
 
-    <div class="slide">
-      <img id="img2" alt="">
-    </div>
 
     <div id="counter"></div>
 
@@ -409,8 +694,9 @@
     ========================= */
 
     /*
-      How long each picture stays
-      on screen.
+      How long each image remains
+      completely still before the
+      next cube transition begins.
 
       5000 = 5 seconds
       10000 = 10 seconds
@@ -418,6 +704,15 @@
     */
 
     const SLIDE_TIME = 5000;
+
+
+    /*
+      EXACT cube transition duration.
+
+      3.6 seconds.
+    */
+
+    const CUBE_TIME = 3600;
 
 
     /*
@@ -450,6 +745,8 @@
 
     let loadedCount = 0;
 
+    let isTransitioning = false;
+
 
     /* =========================
        FIND GITHUB REPOSITORY
@@ -466,11 +763,6 @@
           .filter(Boolean);
 
 
-      /*
-        This slideshow is designed
-        for GitHub Pages.
-      */
-
       if (!hostname.endsWith(".github.io")) {
 
         throw new Error(
@@ -484,13 +776,8 @@
         hostname.split(".")[0];
 
 
-      /*
-        username.github.io
-        OR
-        username.github.io/repository
-      */
-
       let repo;
+
 
       if (path.length > 0) {
 
@@ -521,32 +808,12 @@
         window.location.pathname;
 
 
-      /*
-        If the page is:
-
-        /my-repo/
-
-        use:
-
-        /my-repo/
-      */
-
       if (pathname.endsWith("/")) {
 
         return pathname;
 
       }
 
-
-      /*
-        If the page is:
-
-        /my-repo/index.html
-
-        use:
-
-        /my-repo/
-      */
 
       const lastSlash =
         pathname.lastIndexOf("/");
@@ -596,13 +863,6 @@
         repo
       } = getRepositoryInfo();
 
-
-      /*
-        GitHub API.
-
-        This recursively searches
-        the entire repository.
-      */
 
       const apiURL =
         `https://api.github.com/repos/${owner}/${repo}/git/trees/HEAD?recursive=1`;
@@ -657,23 +917,12 @@
 
 
       /*
-        Find EVERY image inside pics/.
-
-        This includes:
-
-        pics/image.jpg
-
-        pics/folder/image.jpg
-
-        pics/folder/subfolder/image.png
+        Find every image underneath
+        the pics folder.
       */
 
       const imageFiles =
         data.tree.filter(file => {
-
-          /*
-            Must be a real file.
-          */
 
           if (file.type !== "blob") {
 
@@ -682,10 +931,6 @@
           }
 
 
-          /*
-            Must be inside pics/.
-          */
-
           if (!file.path.startsWith("pics/")) {
 
             return false;
@@ -693,27 +938,13 @@
           }
 
 
-          /*
-            Must have a supported
-            image extension.
-          */
-
           return isImageFile(file.path);
 
         });
 
 
       /*
-        Get the actual GitHub Pages
-        base path.
-
-        Example:
-
-        https://username.github.io/
-          -> /
-
-        https://username.github.io/my-repo/
-          -> /my-repo/
+        Find the GitHub Pages base path.
       */
 
       const basePath =
@@ -721,8 +952,8 @@
 
 
       /*
-        Convert repository paths
-        into GitHub Pages URLs.
+        Turn repository paths into
+        real browser URLs.
       */
 
       pictures =
@@ -747,19 +978,7 @@
 
 
       /*
-        Sort naturally.
-
-        1.jpg
-        2.jpg
-        3.jpg
-        10.jpg
-
-        instead of:
-
-        1.jpg
-        10.jpg
-        2.jpg
-        3.jpg
+        Natural sorting.
       */
 
       pictures.sort(
@@ -811,10 +1030,6 @@
               new Image();
 
 
-            /*
-              Successful image.
-            */
-
             image.onload = () => {
 
               loadedCount++;
@@ -828,13 +1043,6 @@
 
             };
 
-
-            /*
-              Failed image.
-
-              Don't let one bad image
-              stop the entire slideshow.
-            */
 
             image.onerror = () => {
 
@@ -863,19 +1071,9 @@
       await Promise.all(promises);
 
 
-      /*
-        Keep ONLY images that
-        actually loaded.
-      */
-
       pictures =
         validPictures;
 
-
-      /*
-        If absolutely nothing loaded,
-        show an error.
-      */
 
       if (pictures.length === 0) {
 
@@ -893,10 +1091,35 @@
 
 
     /* =========================
-       SHOW IMAGE
+       RESET SLIDE CLASSES
     ========================= */
 
-    function showImage(index) {
+    function resetSlideAnimations() {
+
+      slideElements.forEach(slide => {
+
+        slide.classList.remove(
+          "cube-out-right",
+          "cube-in-right",
+          "cube-out-left",
+          "cube-in-left",
+          "cube-shadow-out",
+          "cube-shadow-in"
+        );
+
+      });
+
+    }
+
+
+    /* =========================
+       SHOW IMAGE WITH CUBE
+    ========================= */
+
+    function showImage(
+      index,
+      direction = "right"
+    ) {
 
       if (pictures.length === 0) {
 
@@ -905,49 +1128,200 @@
       }
 
 
-      const nextSlide =
-        activeSlide === 0
-          ? 1
-          : 0;
+      if (isTransitioning) {
+
+        return;
+
+      }
+
+
+      if (index === current && activeSlide === 0) {
+
+        return;
+
+      }
+
+
+      isTransitioning = true;
 
 
       /*
-        Put the requested picture
-        into the hidden slide.
+        Which of the two physical
+        slide elements will become
+        the incoming image?
       */
 
-      slideImages[nextSlide].src =
+      const outgoingSlide =
+        slideElements[activeSlide];
+
+
+      const incomingSlide =
+        slideElements[
+          activeSlide === 0
+            ? 1
+            : 0
+        ];
+
+
+      const incomingImage =
+        slideImages[
+          activeSlide === 0
+            ? 1
+            : 0
+        ];
+
+
+      /*
+        Put the next image into the
+        incoming slide before the
+        animation begins.
+      */
+
+      incomingImage.src =
         pictures[index];
 
 
       /*
-        Update counter.
+        Make sure the old animation
+        classes are gone.
       */
+
+      resetSlideAnimations();
+
+
+      /*
+        Make the incoming slide visible
+        behind the outgoing one.
+      */
+
+      incomingSlide.style.opacity =
+        "1";
+
+      incomingSlide.style.zIndex =
+        "3";
+
+      outgoingSlide.style.zIndex =
+        "2";
+
+
+      /*
+        Determine which direction
+        the cube rotates.
+
+        Right:
+          old image rotates left
+          new image rotates in from right.
+
+        Left:
+          old image rotates right
+          new image rotates in from left.
+      */
+
+      if (direction === "right") {
+
+        outgoingSlide.classList.add(
+          "cube-out-right",
+          "cube-shadow-out"
+        );
+
+        incomingSlide.classList.add(
+          "cube-in-right",
+          "cube-shadow-in"
+        );
+
+      } else {
+
+        outgoingSlide.classList.add(
+          "cube-out-left",
+          "cube-shadow-out"
+        );
+
+        incomingSlide.classList.add(
+          "cube-in-left",
+          "cube-shadow-in"
+        );
+
+      }
+
+
+      /*
+        Update the current image.
+      */
+
+      current =
+        index;
+
 
       counter.textContent =
-        `${index + 1} / ${pictures.length}`;
+        `${current + 1} / ${pictures.length}`;
 
 
       /*
-        Fade out current slide.
+        Wait for the complete
+        3.6 second cube animation.
       */
 
-      slideElements[activeSlide]
-        .classList
-        .remove("active");
+      setTimeout(() => {
+
+        /*
+          Remove animation classes.
+        */
+
+        resetSlideAnimations();
 
 
-      /*
-        Fade in new slide.
-      */
+        /*
+          The incoming slide is now
+          the active slide.
+        */
 
-      slideElements[nextSlide]
-        .classList
-        .add("active");
+        activeSlide =
+          activeSlide === 0
+            ? 1
+            : 0;
 
 
-      activeSlide =
-        nextSlide;
+        /*
+          Make sure the new slide
+          is fully visible.
+        */
+
+        slideElements[activeSlide]
+          .style
+          .opacity = "1";
+
+        slideElements[activeSlide]
+          .style
+          .zIndex = "2";
+
+
+        /*
+          Hide the old slide.
+        */
+
+        const oldSlide =
+          slideElements[
+            activeSlide === 0
+              ? 1
+              : 0
+          ];
+
+
+        oldSlide.style.opacity =
+          "0";
+
+        oldSlide.style.zIndex =
+          "1";
+
+
+        /*
+          Allow the next transition.
+        */
+
+        isTransitioning =
+          false;
+
+      }, CUBE_TIME);
 
     }
 
@@ -965,17 +1339,28 @@
       }
 
 
-      current++;
+      if (isTransitioning) {
 
-
-      if (current >= pictures.length) {
-
-        current = 0;
+        return;
 
       }
 
 
-      showImage(current);
+      let next =
+        current + 1;
+
+
+      if (next >= pictures.length) {
+
+        next = 0;
+
+      }
+
+
+      showImage(
+        next,
+        "right"
+      );
 
     }
 
@@ -993,18 +1378,29 @@
       }
 
 
-      current--;
+      if (isTransitioning) {
+
+        return;
+
+      }
 
 
-      if (current < 0) {
+      let previous =
+        current - 1;
 
-        current =
+
+      if (previous < 0) {
+
+        previous =
           pictures.length - 1;
 
       }
 
 
-      showImage(current);
+      showImage(
+        previous,
+        "left"
+      );
 
     }
 
@@ -1015,24 +1411,59 @@
 
     function startSlideshow() {
 
-      /*
-        Clear old timer.
-      */
-
       if (slideshowTimer) {
 
-        clearInterval(
+        clearTimeout(
           slideshowTimer
         );
 
       }
 
 
-      slideshowTimer =
-        setInterval(
-          nextSlide,
-          SLIDE_TIME
-        );
+      /*
+        Use setTimeout instead of
+        setInterval.
+
+        This prevents the timer from
+        starting another transition
+        while the 3.6-second cube
+        animation is still running.
+      */
+
+      function scheduleNext() {
+
+        slideshowTimer =
+          setTimeout(() => {
+
+            nextSlide();
+
+            /*
+              Wait until the cube is
+              completely finished before
+              scheduling the next image.
+            */
+
+            const waitForTransition =
+              setInterval(() => {
+
+                if (!isTransitioning) {
+
+                  clearInterval(
+                    waitForTransition
+                  );
+
+                  scheduleNext();
+
+                }
+
+              }, 50);
+
+          }, SLIDE_TIME);
+
+      }
+
+
+      scheduleNext();
 
     }
 
@@ -1046,8 +1477,7 @@
       try {
 
         /*
-          Disable the button while
-          everything loads.
+          Disable button while loading.
         */
 
         playButton.style.display =
@@ -1061,21 +1491,21 @@
 
 
         /*
-          Find every image.
+          Find images.
         */
 
         await getPictures();
 
 
         /*
-          Preload every image.
+          Preload images.
         */
 
         await preloadImages();
 
 
         /*
-          Start from the first image.
+          Start at image #1.
         */
 
         current = 0;
@@ -1084,7 +1514,7 @@
 
 
         /*
-          Put first image into
+          Put first image on
           first slide.
         */
 
@@ -1093,11 +1523,8 @@
 
 
         /*
-          Put second image into
-          second slide.
-
-          If there's only one image,
-          reuse the first one.
+          Preload second image
+          into second slide.
         */
 
         slideImages[1].src =
@@ -1109,8 +1536,7 @@
 
 
         /*
-          Make sure first slide
-          is visible.
+          First slide visible.
         */
 
         slideElements[0]
@@ -1118,9 +1544,29 @@
           .add("active");
 
 
+        slideElements[0]
+          .style
+          .opacity = "1";
+
+
+        slideElements[0]
+          .style
+          .zIndex = "2";
+
+
         slideElements[1]
           .classList
           .remove("active");
+
+
+        slideElements[1]
+          .style
+          .opacity = "0";
+
+
+        slideElements[1]
+          .style
+          .zIndex = "1";
 
 
         /*
@@ -1132,11 +1578,7 @@
 
 
         /*
-          Play music.
-
-          Because this function runs
-          from the Play button click,
-          browsers normally allow playback.
+          Start music.
         */
 
         bgm.currentTime = 0;
@@ -1173,7 +1615,7 @@
 
 
         /*
-          Start changing images.
+          Start slideshow.
         */
 
         startSlideshow();
@@ -1201,11 +1643,6 @@
         errorText.textContent =
           error.message;
 
-
-        /*
-          If we have an image URL,
-          show it to make debugging easier.
-        */
 
         if (pictures.length > 0) {
 
@@ -1261,7 +1698,7 @@
       event => {
 
         /*
-          Left arrow = previous.
+          Left arrow.
         */
 
         if (
@@ -1269,19 +1706,37 @@
           pictures.length > 0
         ) {
 
+          if (slideshowTimer) {
+
+            clearTimeout(
+              slideshowTimer
+            );
+
+          }
+
+
           previousSlide();
 
         }
 
 
         /*
-          Right arrow = next.
+          Right arrow.
         */
 
         if (
           event.key === "ArrowRight" &&
           pictures.length > 0
         ) {
+
+          if (slideshowTimer) {
+
+            clearTimeout(
+              slideshowTimer
+            );
+
+          }
+
 
           nextSlide();
 
