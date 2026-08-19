@@ -2,11 +2,34 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  >
 
-  <title>Andres Peppa</title>
+  <title>Andres Peppa™</title>
 
   <style>
+    /* =========================================================
+       ANDRES PEPPA™
+       The website equivalent of finding a mysterious USB stick
+       labeled "DO NOT OPEN" and opening it anyway.
+    ========================================================= */
+
+    :root {
+      --red: #ff1744;
+      --pink: #ff4d7d;
+      --purple: #8b5cf6;
+      --cyan: #22d3ee;
+      --green: #22c55e;
+      --yellow: #facc15;
+      --white: #fff;
+      --muted: #a1a1aa;
+      --panel: rgba(18, 18, 22, 0.88);
+      --border: rgba(255,255,255,0.1);
+      --shadow: 0 25px 80px rgba(0,0,0,.55);
+    }
+
     * {
       box-sizing: border-box;
     }
@@ -17,13 +40,31 @@
       height: 100%;
       margin: 0;
       overflow: hidden;
+
       background: #000;
-      font-family: Arial, Helvetica, sans-serif;
+
+      font-family:
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
     }
 
-    /* =========================
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* =========================================================
        START SCREEN
-    ========================= */
+    ========================================================= */
 
     #startScreen {
       position: fixed;
@@ -35,87 +76,262 @@
       justify-content: center;
       align-items: center;
 
+      padding: 24px;
+
       color: white;
+      text-align: center;
+
+      overflow: hidden;
 
       background:
         radial-gradient(
-          circle at center,
-          #292929 0%,
-          #0a0a0a 55%,
-          #000 100%
+          circle at 50% 35%,
+          rgba(255,23,68,.20),
+          transparent 25%
+        ),
+        radial-gradient(
+          circle at 20% 80%,
+          rgba(139,92,246,.15),
+          transparent 30%
+        ),
+        radial-gradient(
+          circle at 80% 20%,
+          rgba(34,211,238,.10),
+          transparent 30%
+        ),
+        linear-gradient(
+          135deg,
+          #171717,
+          #050505 55%,
+          #000
         );
     }
 
+    #startScreen::before {
+      content: "";
+
+      position: absolute;
+      inset: -50%;
+
+      background:
+        repeating-linear-gradient(
+          45deg,
+          transparent 0 20px,
+          rgba(255,255,255,.015) 20px 21px
+        );
+
+      animation: backgroundDrift 18s linear infinite;
+
+      pointer-events: none;
+    }
+
+    @keyframes backgroundDrift {
+      from {
+        transform: translate3d(0,0,0) rotate(0deg);
+      }
+
+      to {
+        transform: translate3d(40px,40px,0) rotate(2deg);
+      }
+    }
+
+    .start-badge {
+      position: relative;
+
+      margin-bottom: 18px;
+
+      padding: 7px 13px;
+
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 999px;
+
+      color: #d4d4d8;
+      background: rgba(255,255,255,.05);
+
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+
+      backdrop-filter: blur(10px);
+
+      animation: badgeFloat 2.5s ease-in-out infinite;
+    }
+
+    @keyframes badgeFloat {
+      0%, 100% {
+        transform: translateY(0) rotate(-1deg);
+      }
+
+      50% {
+        transform: translateY(-5px) rotate(1deg);
+      }
+    }
+
     #startScreen h1 {
+      position: relative;
+
       margin: 0;
 
-      font-size: clamp(48px, 10vw, 120px);
-      font-weight: 900;
-      letter-spacing: -6px;
-      text-align: center;
+      font-size: clamp(50px, 12vw, 150px);
+      line-height: .85;
+
+      font-weight: 1000;
+      letter-spacing: -8px;
+
+      color: white;
 
       text-shadow:
-        0 0 20px rgba(255,255,255,0.12);
+        0 5px 0 #111,
+        0 10px 30px rgba(0,0,0,.7),
+        0 0 35px rgba(255,23,68,.16);
+
+      transform: rotate(-1deg);
+    }
+
+    #startScreen h1 span {
+      display: inline-block;
+
+      color: var(--red);
+
+      animation: titleWobble 2.2s ease-in-out infinite;
+    }
+
+    @keyframes titleWobble {
+      0%, 100% {
+        transform: rotate(0deg) scale(1);
+      }
+
+      50% {
+        transform: rotate(3deg) scale(1.03);
+      }
     }
 
     #startScreen p {
-      margin: 18px 0 28px;
+      position: relative;
 
-      color: #aaa;
-      font-size: 16px;
-      letter-spacing: 1px;
+      max-width: 500px;
+
+      margin: 25px 0 28px;
+
+      color: #a1a1aa;
+
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .subtitle-weird {
+      display: block;
+
+      margin-top: 7px;
+
+      color: #666;
+
+      font-size: 12px;
     }
 
     #playButton {
-      border: none;
-      outline: none;
+      position: relative;
+
+      border: 0;
+      outline: 0;
 
       padding: 18px 48px;
 
       border-radius: 999px;
 
       color: white;
-      background: #ff1744;
+      background:
+        linear-gradient(
+          135deg,
+          #ff1744,
+          #ff4565
+        );
 
-      font-size: 20px;
-      font-weight: bold;
+      font-size: 18px;
+      font-weight: 900;
 
       cursor: pointer;
 
       box-shadow:
-        0 0 30px rgba(255, 23, 68, 0.45);
+        0 12px 30px rgba(255,23,68,.28),
+        0 0 0 1px rgba(255,255,255,.08) inset;
 
       transition:
-        transform 0.2s ease,
-        background 0.2s ease,
-        box-shadow 0.2s ease;
+        transform .18s ease,
+        box-shadow .18s ease,
+        filter .18s ease;
     }
 
     #playButton:hover {
-      transform: scale(1.08);
+      transform:
+        translateY(-4px)
+        rotate(-1deg)
+        scale(1.05);
 
-      background: #ff4565;
+      filter: brightness(1.1);
 
       box-shadow:
-        0 0 45px rgba(255, 23, 68, 0.65);
+        0 18px 45px rgba(255,23,68,.42),
+        0 0 0 1px rgba(255,255,255,.12) inset;
     }
 
     #playButton:active {
-      transform: scale(0.97);
+      transform: scale(.96);
     }
 
     #loading {
       display: none;
 
+      position: relative;
+
       margin-top: 20px;
 
-      color: #999;
-      font-size: 14px;
+      color: #a1a1aa;
+
+      font-size: 13px;
+      font-weight: 700;
     }
 
-    /* =========================
+    .loading-dots::after {
+      content: "";
+
+      animation: dots 1.4s steps(4,end) infinite;
+    }
+
+    @keyframes dots {
+      0% {
+        content: "";
+      }
+
+      25% {
+        content: ".";
+      }
+
+      50% {
+        content: "..";
+      }
+
+      75%,
+      100% {
+        content: "...";
+      }
+    }
+
+    .start-footer {
+      position: absolute;
+
+      bottom: 22px;
+
+      color: #444;
+
+      font-size: 10px;
+      letter-spacing: 1px;
+    }
+
+    /* =========================================================
        SLIDESHOW
-    ========================= */
+    ========================================================= */
 
     #slideshow {
       position: fixed;
@@ -127,29 +343,15 @@
 
       background: #000;
 
-      /*
-        This is the perspective
-        that makes the cube effect
-        look three-dimensional.
-      */
       perspective: 1800px;
       perspective-origin: center center;
     }
-
-    /*
-      This container is responsible
-      for the actual 3D cube rotation.
-    */
 
     #cube {
       position: absolute;
       inset: 0;
 
       transform-style: preserve-3d;
-
-      /*
-        Start with no rotation.
-      */
 
       transform:
         translateZ(0)
@@ -158,14 +360,6 @@
       will-change: transform;
     }
 
-    /*
-      Every slide is positioned on
-      top of the other.
-
-      During a transition, one rotates
-      away while the other rotates in.
-    */
-
     .slide {
       position: absolute;
       inset: 0;
@@ -173,6 +367,8 @@
       display: flex;
       align-items: center;
       justify-content: center;
+
+      overflow: hidden;
 
       background: #000;
 
@@ -184,8 +380,6 @@
       -webkit-backface-visibility: hidden;
 
       transform-style: preserve-3d;
-
-      overflow: hidden;
     }
 
     .slide.active {
@@ -199,9 +393,6 @@
       width: 100%;
       height: 100%;
 
-      max-width: 100vw;
-      max-height: 100vh;
-
       object-fit: contain;
 
       background: #000;
@@ -211,12 +402,6 @@
 
       image-rendering: auto;
     }
-
-    /*
-      The dark edge/shadow makes the
-      rotation feel more like a real
-      3D cube rather than a flat spin.
-    */
 
     .slide::after {
       content: "";
@@ -229,48 +414,34 @@
       background:
         linear-gradient(
           90deg,
-          rgba(0,0,0,0.30),
+          rgba(0,0,0,.38),
           transparent 20%,
           transparent 80%,
-          rgba(0,0,0,0.30)
+          rgba(0,0,0,.38)
         );
 
       opacity: 0;
 
-      transition: opacity 0.2s linear;
+      transition: opacity .15s linear;
     }
 
-    /* =========================
-       CUBE TRANSITION
-    ========================= */
-
-    /*
-      Google-Slides-style cube duration.
-
-      3.6 seconds = 3600ms.
-    */
-
-    .cube-transition {
-      animation:
-        cubeRotate
-        3.6s
-        cubic-bezier(0.45, 0, 0.25, 1)
-        forwards;
+    .cube-shadow-out::after {
+      opacity: .78;
     }
 
-    /*
-      The outgoing image rotates
-      90 degrees away.
+    .cube-shadow-in::after {
+      opacity: .42;
+    }
 
-      The incoming image rotates
-      90 degrees into position.
-    */
+    /* =========================================================
+       CUBE TRANSITIONS
+    ========================================================= */
 
     .slide.cube-out-right {
       animation:
         cubeOutRight
         3.6s
-        cubic-bezier(0.45, 0, 0.25, 1)
+        cubic-bezier(.45,0,.25,1)
         forwards;
     }
 
@@ -278,7 +449,7 @@
       animation:
         cubeInRight
         3.6s
-        cubic-bezier(0.45, 0, 0.25, 1)
+        cubic-bezier(.45,0,.25,1)
         forwards;
     }
 
@@ -286,7 +457,7 @@
       animation:
         cubeOutLeft
         3.6s
-        cubic-bezier(0.45, 0, 0.25, 1)
+        cubic-bezier(.45,0,.25,1)
         forwards;
     }
 
@@ -294,16 +465,11 @@
       animation:
         cubeInLeft
         3.6s
-        cubic-bezier(0.45, 0, 0.25, 1)
+        cubic-bezier(.45,0,.25,1)
         forwards;
     }
 
-    /*
-      Rotate clockwise.
-    */
-
     @keyframes cubeOutRight {
-
       0% {
         transform:
           translateX(0)
@@ -323,11 +489,9 @@
 
         opacity: 0;
       }
-
     }
 
     @keyframes cubeInRight {
-
       0% {
         transform:
           translateX(50%)
@@ -347,15 +511,9 @@
 
         opacity: 1;
       }
-
     }
 
-    /*
-      Rotate counter-clockwise.
-    */
-
     @keyframes cubeOutLeft {
-
       0% {
         transform:
           translateX(0)
@@ -375,11 +533,9 @@
 
         opacity: 0;
       }
-
     }
 
     @keyframes cubeInLeft {
-
       0% {
         transform:
           translateX(-50%)
@@ -399,76 +555,170 @@
 
         opacity: 1;
       }
-
     }
 
-    /*
-      Add shadows while the cube is rotating.
-    */
+    /* =========================================================
+       GOOFY HUD
+    ========================================================= */
 
-    .cube-shadow-out::after {
-      opacity: 0.75;
+    #hud {
+      position: fixed;
+      inset: 0;
+
+      z-index: 100;
+
+      pointer-events: none;
     }
 
-    .cube-shadow-in::after {
-      opacity: 0.45;
-    }
+    .hud-pill {
+      position: absolute;
 
-    /* =========================
-       COUNTER
-    ========================= */
+      padding: 9px 14px;
+
+      border:
+        1px solid
+        rgba(255,255,255,.10);
+
+      border-radius: 999px;
+
+      color: rgba(255,255,255,.82);
+
+      background:
+        rgba(0,0,0,.48);
+
+      font-size: 12px;
+      font-weight: 800;
+
+      backdrop-filter: blur(10px);
+
+      box-shadow:
+        0 10px 30px rgba(0,0,0,.25);
+    }
 
     #counter {
-      position: fixed;
-
-      right: 20px;
-      bottom: 20px;
-
-      z-index: 100;
-
-      padding: 8px 13px;
-
-      border-radius: 20px;
-
-      color: white;
-
-      background: rgba(0, 0, 0, 0.55);
-
-      font-size: 13px;
-
-      opacity: 0.7;
-
-      backdrop-filter: blur(5px);
+      right: 18px;
+      bottom: 18px;
     }
 
-    /* =========================
-       LOADING STATUS
-    ========================= */
-
     #loadStatus {
-      position: fixed;
-
-      left: 20px;
-      bottom: 20px;
-
-      z-index: 100;
-
-      padding: 8px 13px;
-
-      border-radius: 20px;
+      left: 18px;
+      bottom: 18px;
 
       color: #aaa;
 
-      background: rgba(0, 0, 0, 0.55);
-
-      font-size: 12px;
-
-      backdrop-filter: blur(5px);
+      font-weight: 600;
     }
 
-    /* =========================
+    #musicStatus {
+      left: 18px;
+      top: 18px;
+
+      color: #ddd;
+    }
+
+    #pauseBadge {
+      left: 50%;
+      top: 18px;
+
+      transform: translateX(-50%);
+
+      display: none;
+
+      color: #facc15;
+    }
+
+    #caption {
+      position: absolute;
+
+      left: 50%;
+      bottom: 65px;
+
+      transform:
+        translateX(-50%)
+        rotate(-1deg);
+
+      max-width: min(700px, 85vw);
+
+      padding: 9px 16px;
+
+      border-radius: 999px;
+
+      color: white;
+
+      background:
+        rgba(0,0,0,.62);
+
+      font-size: 13px;
+      font-weight: 900;
+      text-align: center;
+
+      backdrop-filter: blur(10px);
+
+      opacity: 0;
+
+      transition:
+        opacity .25s ease,
+        transform .25s ease;
+    }
+
+    #caption.show {
+      opacity: 1;
+
+      transform:
+        translateX(-50%)
+        rotate(-1deg)
+        translateY(-3px);
+    }
+
+    /* =========================================================
+       GOOFY RANDOM EFFECT
+    ========================================================= */
+
+    #goofyFlash {
+      position: fixed;
+      inset: 0;
+
+      z-index: 90;
+
+      display: flex;
+
+      align-items: center;
+      justify-content: center;
+
+      pointer-events: none;
+
+      opacity: 0;
+
+      color: white;
+
+      font-size: clamp(40px, 9vw, 110px);
+      font-weight: 1000;
+      text-align: center;
+
+      text-shadow:
+        0 6px 0 #000,
+        0 15px 50px rgba(0,0,0,.8);
+
+      transform:
+        scale(.65)
+        rotate(-8deg);
+
+      transition:
+        opacity .18s ease,
+        transform .18s cubic-bezier(.2,1.6,.3,1);
+    }
+
+    #goofyFlash.show {
+      opacity: 1;
+
+      transform:
+        scale(1)
+        rotate(-2deg);
+    }
+
+    /* =========================================================
        ERROR SCREEN
-    ========================= */
+    ========================================================= */
 
     #error {
       position: fixed;
@@ -484,22 +734,30 @@
       padding: 30px;
 
       color: white;
-      background: #000;
+
+      background:
+        radial-gradient(
+          circle,
+          #18181b,
+          #000 65%
+        );
 
       text-align: center;
     }
 
     #error div {
-      max-width: 650px;
+      width: min(650px, 100%);
     }
 
     #error h2 {
-      margin-bottom: 10px;
+      margin: 0 0 10px;
+
       font-size: 30px;
     }
 
     #error p {
       color: #aaa;
+
       line-height: 1.6;
     }
 
@@ -509,29 +767,647 @@
       margin-top: 20px;
       padding: 15px;
 
-      border-radius: 10px;
+      overflow-wrap: anywhere;
+
+      border-radius: 12px;
 
       color: #ff6b81;
       background: #151515;
 
       font-family: monospace;
       font-size: 13px;
-
-      word-break: break-all;
     }
 
-    /* =========================
-       MOBILE
-    ========================= */
+    /* =========================================================
+       DEV OVERLAY
+    ========================================================= */
 
-    @media (max-width: 600px) {
+    #devOverlay {
+      position: fixed;
+      inset: 0;
 
+      z-index: 5000;
+
+      display: none;
+
+      padding: 20px;
+
+      overflow-y: auto;
+
+      background:
+        radial-gradient(
+          circle at top right,
+          rgba(139,92,246,.16),
+          transparent 30%
+        ),
+        rgba(0,0,0,.78);
+
+      backdrop-filter: blur(14px);
+    }
+
+    #devOverlay.open {
+      display: block;
+    }
+
+    .dev-window {
+      width: min(1050px, 100%);
+      min-height: calc(100vh - 40px);
+
+      margin: 0 auto;
+
+      padding: 25px;
+
+      border:
+        1px solid
+        rgba(255,255,255,.11);
+
+      border-radius: 24px;
+
+      background:
+        linear-gradient(
+          145deg,
+          rgba(28,28,34,.96),
+          rgba(10,10,12,.96)
+        );
+
+      box-shadow: var(--shadow);
+
+      color: white;
+    }
+
+    .dev-header {
+      display: flex;
+
+      align-items: center;
+      justify-content: space-between;
+
+      gap: 15px;
+
+      margin-bottom: 25px;
+    }
+
+    .dev-title {
+      display: flex;
+      align-items: center;
+
+      gap: 12px;
+    }
+
+    .dev-icon {
+      width: 44px;
+      height: 44px;
+
+      display: grid;
+      place-items: center;
+
+      border-radius: 13px;
+
+      background:
+        linear-gradient(
+          135deg,
+          #8b5cf6,
+          #ec4899
+        );
+
+      font-size: 21px;
+
+      box-shadow:
+        0 8px 25px rgba(139,92,246,.25);
+    }
+
+    .dev-title h2 {
+      margin: 0;
+
+      font-size: 22px;
+    }
+
+    .dev-title p {
+      margin: 3px 0 0;
+
+      color: #71717a;
+
+      font-size: 12px;
+    }
+
+    .dev-close {
+      width: 40px;
+      height: 40px;
+
+      border: 1px solid var(--border);
+      border-radius: 12px;
+
+      color: white;
+      background: rgba(255,255,255,.05);
+
+      cursor: pointer;
+
+      transition:
+        transform .15s ease,
+        background .15s ease;
+    }
+
+    .dev-close:hover {
+      transform: rotate(8deg);
+
+      background: rgba(255,255,255,.1);
+    }
+
+    .dev-grid {
+      display: grid;
+
+      grid-template-columns:
+        minmax(0, 1fr)
+        minmax(0, 1fr);
+
+      gap: 18px;
+    }
+
+    .dev-card {
+      padding: 20px;
+
+      border:
+        1px solid
+        rgba(255,255,255,.08);
+
+      border-radius: 18px;
+
+      background:
+        rgba(255,255,255,.035);
+    }
+
+    .dev-card.full {
+      grid-column: 1 / -1;
+    }
+
+    .dev-card h3 {
+      margin: 0 0 7px;
+
+      font-size: 16px;
+    }
+
+    .dev-card .description {
+      margin: 0 0 17px;
+
+      color: #71717a;
+
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .repo-info {
+      display: grid;
+
+      grid-template-columns:
+        repeat(3, minmax(0,1fr));
+
+      gap: 10px;
+    }
+
+    .info-box {
+      padding: 12px;
+
+      border-radius: 12px;
+
+      background: rgba(0,0,0,.25);
+    }
+
+    .info-label {
+      display: block;
+
+      margin-bottom: 5px;
+
+      color: #71717a;
+
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .info-value {
+      overflow: hidden;
+
+      color: #e4e4e7;
+
+      font-size: 12px;
+      font-weight: 700;
+
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .field {
+      margin-bottom: 13px;
+    }
+
+    .field:last-child {
+      margin-bottom: 0;
+    }
+
+    .field label {
+      display: block;
+
+      margin-bottom: 7px;
+
+      color: #a1a1aa;
+
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .6px;
+    }
+
+    .field input[type="text"],
+    .field input[type="password"],
+    .field input[type="email"] {
+      width: 100%;
+
+      padding: 12px 13px;
+
+      border:
+        1px solid
+        rgba(255,255,255,.10);
+
+      border-radius: 11px;
+
+      outline: none;
+
+      color: white;
+      background: rgba(0,0,0,.35);
+
+      transition:
+        border-color .15s ease,
+        box-shadow .15s ease;
+    }
+
+    .field input:focus {
+      border-color: rgba(139,92,246,.7);
+
+      box-shadow:
+        0 0 0 3px rgba(139,92,246,.12);
+    }
+
+    .token-warning {
+      margin-top: 10px;
+      padding: 10px 12px;
+
+      border-radius: 10px;
+
+      color: #fbbf24;
+      background: rgba(250,204,21,.07);
+
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    .file-drop {
+      position: relative;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      min-height: 160px;
+
+      padding: 25px;
+
+      border:
+        1px dashed
+        rgba(255,255,255,.18);
+
+      border-radius: 16px;
+
+      background: rgba(0,0,0,.2);
+
+      text-align: center;
+
+      cursor: pointer;
+
+      transition:
+        border-color .2s ease,
+        background .2s ease,
+        transform .2s ease;
+    }
+
+    .file-drop:hover,
+    .file-drop.dragging {
+      border-color: var(--purple);
+
+      background:
+        rgba(139,92,246,.08);
+
+      transform: scale(1.01);
+    }
+
+    .file-drop input {
+      position: absolute;
+
+      inset: 0;
+
+      width: 100%;
+      height: 100%;
+
+      opacity: 0;
+
+      cursor: pointer;
+    }
+
+    .drop-icon {
+      margin-bottom: 8px;
+
+      font-size: 36px;
+    }
+
+    .drop-title {
+      font-weight: 900;
+    }
+
+    .drop-subtitle {
+      margin-top: 5px;
+
+      color: #71717a;
+
+      font-size: 11px;
+    }
+
+    #fileList {
+      display: grid;
+
+      gap: 7px;
+
+      margin-top: 13px;
+    }
+
+    .file-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      gap: 10px;
+
+      padding: 9px 11px;
+
+      border-radius: 10px;
+
+      background: rgba(255,255,255,.04);
+
+      font-size: 11px;
+    }
+
+    .file-name {
+      overflow: hidden;
+
+      color: #d4d4d8;
+
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .file-size {
+      flex-shrink: 0;
+
+      color: #71717a;
+    }
+
+    .dev-actions {
+      display: flex;
+      flex-wrap: wrap;
+
+      gap: 9px;
+
+      margin-top: 15px;
+    }
+
+    .dev-button {
+      border: 0;
+
+      padding: 11px 15px;
+
+      border-radius: 11px;
+
+      color: white;
+      background: rgba(255,255,255,.08);
+
+      font-size: 12px;
+      font-weight: 900;
+
+      cursor: pointer;
+
+      transition:
+        transform .15s ease,
+        filter .15s ease,
+        background .15s ease;
+    }
+
+    .dev-button:hover {
+      transform: translateY(-2px);
+
+      filter: brightness(1.1);
+
+      background: rgba(255,255,255,.12);
+    }
+
+    .dev-button.primary {
+      background:
+        linear-gradient(
+          135deg,
+          #8b5cf6,
+          #ec4899
+        );
+    }
+
+    .dev-button.green {
+      background:
+        linear-gradient(
+          135deg,
+          #16a34a,
+          #22c55e
+        );
+    }
+
+    .dev-button.red {
+      background:
+        linear-gradient(
+          135deg,
+          #dc2626,
+          #ef4444
+        );
+    }
+
+    .dev-button:disabled {
+      opacity: .45;
+
+      cursor: not-allowed;
+
+      transform: none;
+      filter: none;
+    }
+
+    #devStatus {
+      min-height: 20px;
+
+      margin-top: 13px;
+
+      color: #a1a1aa;
+
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .progress {
+      width: 100%;
+      height: 6px;
+
+      margin-top: 10px;
+
+      overflow: hidden;
+
+      border-radius: 99px;
+
+      background: rgba(255,255,255,.07);
+    }
+
+    #progressBar {
+      width: 0%;
+      height: 100%;
+
+      border-radius: inherit;
+
+      background:
+        linear-gradient(
+          90deg,
+          #8b5cf6,
+          #ec4899
+        );
+
+      transition: width .2s ease;
+    }
+
+    .dev-log {
+      max-height: 180px;
+
+      margin-top: 15px;
+      padding: 12px;
+
+      overflow-y: auto;
+
+      border-radius: 12px;
+
+      background: #070708;
+
+      color: #71717a;
+
+      font-family: monospace;
+      font-size: 10px;
+      line-height: 1.6;
+    }
+
+    .dev-log .success {
+      color: #4ade80;
+    }
+
+    .dev-log .error {
+      color: #fb7185;
+    }
+
+    .dev-log .info {
+      color: #60a5fa;
+    }
+
+    .security-note {
+      margin-top: 12px;
+
+      color: #52525b;
+
+      font-size: 10px;
+      line-height: 1.5;
+    }
+
+    /* =========================================================
+       TOAST
+    ========================================================= */
+
+    #toast {
+      position: fixed;
+
+      left: 50%;
+      bottom: 25px;
+
+      z-index: 10000;
+
+      max-width: min(90vw, 500px);
+
+      padding: 12px 17px;
+
+      border:
+        1px solid
+        rgba(255,255,255,.1);
+
+      border-radius: 999px;
+
+      color: white;
+
+      background:
+        rgba(20,20,23,.92);
+
+      box-shadow:
+        0 15px 50px rgba(0,0,0,.4);
+
+      backdrop-filter: blur(12px);
+
+      opacity: 0;
+
+      pointer-events: none;
+
+      transform:
+        translate(-50%, 15px)
+        scale(.95);
+
+      transition:
+        opacity .2s ease,
+        transform .2s ease;
+
+      font-size: 12px;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    #toast.show {
+      opacity: 1;
+
+      transform:
+        translate(-50%, 0)
+        scale(1);
+    }
+
+    /* =========================================================
+       RESPONSIVE
+    ========================================================= */
+
+    @media (max-width: 750px) {
       #startScreen h1 {
-        letter-spacing: -3px;
+        letter-spacing: -5px;
       }
 
-      #playButton {
-        padding: 16px 38px;
+      .dev-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .dev-card.full {
+        grid-column: auto;
+      }
+
+      .repo-info {
+        grid-template-columns: 1fr;
+      }
+
+      .dev-window {
+        padding: 18px;
+
+        border-radius: 18px;
+      }
+
+      #caption {
+        bottom: 55px;
       }
 
       #counter {
@@ -543,85 +1419,131 @@
         left: 10px;
         bottom: 10px;
       }
-
     }
 
-    /* =========================
-       REDUCE MOTION
-    ========================= */
+    /* =========================================================
+       REDUCED MOTION
+    ========================================================= */
 
     @media (prefers-reduced-motion: reduce) {
-
-      .cube-transition,
-      .slide.cube-out-right,
-      .slide.cube-in-right,
-      .slide.cube-out-left,
-      .slide.cube-in-left {
-        animation-duration: 0.01ms !important;
+      *,
+      *::before,
+      *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
       }
-
     }
   </style>
 </head>
 
 <body>
 
-  <!-- =========================
+  <!-- =======================================================
        START SCREEN
-  ========================= -->
+  ======================================================== -->
 
   <section id="startScreen">
 
-    <h1>ANDRES PEPPA</h1>
+    <div class="start-badge">
+      ⚠️ Extremely Serious Slideshow
+    </div>
 
-    <p>Click play to begin.</p>
+    <h1>
+      ANDRES <span>PEPPA</span>
+    </h1>
+
+    <p>
+      A completely normal collection of pictures.
+      <span class="subtitle-weird">
+        There is absolutely nothing suspicious about this website.
+      </span>
+    </p>
 
     <button id="playButton">
-      ▶ PLAY
+      ▶ PLAY THE NONSENSE
     </button>
 
     <div id="loading">
-      Loading pictures...
+      <span class="loading-dots">Loading the silliness</span>
+    </div>
+
+    <div class="start-footer">
+      made with questionable decisions™
     </div>
 
   </section>
 
 
-  <!-- =========================
+  <!-- =======================================================
        SLIDESHOW
-  ========================= -->
+  ======================================================== -->
 
   <main id="slideshow">
 
     <div id="cube">
 
       <div class="slide active">
-        <img id="img1" alt="">
+        <img id="img1" alt="Andres Peppa picture">
       </div>
 
       <div class="slide">
-        <img id="img2" alt="">
+        <img id="img2" alt="Andres Peppa picture">
       </div>
 
     </div>
 
 
-    <div id="counter"></div>
+    <div id="hud">
 
-    <div id="loadStatus"></div>
+      <div
+        id="musicStatus"
+        class="hud-pill"
+      >
+        🎵 hotline machinery: loading
+      </div>
+
+      <div
+        id="pauseBadge"
+        class="hud-pill"
+      >
+        ⏸ PAUSED — society has stopped
+      </div>
+
+      <div
+        id="counter"
+        class="hud-pill"
+      ></div>
+
+      <div
+        id="loadStatus"
+        class="hud-pill"
+      ></div>
+
+      <div id="caption"></div>
+
+    </div>
 
   </main>
 
 
-  <!-- =========================
+  <!-- =======================================================
+       GOOFY FLASH
+  ======================================================== -->
+
+  <div id="goofyFlash"></div>
+
+
+  <!-- =======================================================
        ERROR
-  ========================= -->
+  ======================================================== -->
 
   <div id="error">
 
     <div>
 
-      <h2>Couldn't load the pictures.</h2>
+      <h2>💀 The pictures have escaped.</h2>
 
       <p id="errorText"></p>
 
@@ -632,23 +1554,313 @@
   </div>
 
 
-  <!-- =========================
+  <!-- =======================================================
        BACKGROUND MUSIC
-  ========================= -->
+       
+       Put your own bgm.mp3 next to index.html.
+       The Web Audio filter below makes it sound muffled.
+  ======================================================== -->
 
   <audio
     id="bgm"
     src="bgm.mp3"
     preload="auto"
-    loop>
-  </audio>
+    loop
+  ></audio>
+
+
+  <!-- =======================================================
+       DEV PANEL
+  ======================================================== -->
+
+  <div id="devOverlay">
+
+    <div class="dev-window">
+
+      <div class="dev-header">
+
+        <div class="dev-title">
+
+          <div class="dev-icon">
+            🧪
+          </div>
+
+          <div>
+            <h2>Andres Peppa Dev Laboratory</h2>
+
+            <p>
+              Please do not press buttons you don't understand.
+            </p>
+          </div>
+
+        </div>
+
+        <button
+          id="devClose"
+          class="dev-close"
+          title="Close developer panel"
+        >
+          ✕
+        </button>
+
+      </div>
+
+
+      <div class="dev-grid">
+
+        <!-- =================================================
+             REPOSITORY INFO
+        ================================================== -->
+
+        <section class="dev-card full">
+
+          <h3>
+            🗃️ Current Repository
+          </h3>
+
+          <p class="description">
+            This is the GitHub repository detected from the
+            current GitHub Pages URL.
+          </p>
+
+          <div class="repo-info">
+
+            <div class="info-box">
+
+              <span class="info-label">
+                Owner
+              </span>
+
+              <div
+                id="repoOwner"
+                class="info-value"
+              >
+                detecting...
+              </div>
+
+            </div>
+
+            <div class="info-box">
+
+              <span class="info-label">
+                Repository
+              </span>
+
+              <div
+                id="repoName"
+                class="info-value"
+              >
+                detecting...
+              </div>
+
+            </div>
+
+            <div class="info-box">
+
+              <span class="info-label">
+                Branch
+              </span>
+
+              <div
+                id="repoBranch"
+                class="info-value"
+              >
+                detecting...
+              </div>
+
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- =================================================
+             GITHUB AUTH
+        ================================================== -->
+
+        <section class="dev-card">
+
+          <h3>
+            🔑 GitHub Access
+          </h3>
+
+          <p class="description">
+            Enter a GitHub fine-grained personal access token
+            with repository Contents read/write permission.
+          </p>
+
+          <div class="field">
+
+            <label for="githubToken">
+              PERSONAL ACCESS TOKEN
+            </label>
+
+            <input
+              id="githubToken"
+              type="password"
+              autocomplete="off"
+              placeholder="github_pat_..."
+              spellcheck="false"
+            >
+
+          </div>
+
+          <div class="token-warning">
+            ⚠️ This token is only kept in memory by this page.
+            Do not paste a token into the HTML source.
+          </div>
+
+          <div class="dev-actions">
+
+            <button
+              id="testToken"
+              class="dev-button"
+            >
+              🔌 TEST TOKEN
+            </button>
+
+            <button
+              id="clearToken"
+              class="dev-button red"
+            >
+              🗑 CLEAR
+            </button>
+
+          </div>
+
+        </section>
+
+
+        <!-- =================================================
+             UPLOAD
+        ================================================== -->
+
+        <section class="dev-card">
+
+          <h3>
+            📸 Upload Pictures
+          </h3>
+
+          <p class="description">
+            Selected images will be committed directly into
+            <strong>/pics/</strong> in the detected repository.
+          </p>
+
+          <div
+            id="fileDrop"
+            class="file-drop"
+          >
+
+            <input
+              id="pictureInput"
+              type="file"
+              accept="image/jpeg,image/png,image/gif,image/webp,image/bmp,image/avif,image/svg+xml"
+              multiple
+            >
+
+            <div>
+
+              <div class="drop-icon">
+                📸
+              </div>
+
+              <div class="drop-title">
+                Drop pictures here
+              </div>
+
+              <div class="drop-subtitle">
+                or click to browse your computer
+              </div>
+
+            </div>
+
+          </div>
+
+          <div id="fileList"></div>
+
+          <div class="dev-actions">
+
+            <button
+              id="uploadButton"
+              class="dev-button primary"
+              disabled
+            >
+              🚀 UPLOAD TO GITHUB
+            </button>
+
+            <button
+              id="clearFiles"
+              class="dev-button"
+            >
+              🧹 CLEAR FILES
+            </button>
+
+          </div>
+
+        </section>
+
+
+        <!-- =================================================
+             STATUS
+        ================================================== -->
+
+        <section class="dev-card full">
+
+          <h3>
+            📟 Dev Console
+          </h3>
+
+          <p
+            id="devStatus"
+          >
+            Waiting for someone to do something questionable.
+          </p>
+
+          <div class="progress">
+            <div id="progressBar"></div>
+          </div>
+
+          <div
+            id="devLog"
+            class="dev-log"
+          >
+            <div class="info">
+              [BOOT] Dev laboratory initialized.
+            </div>
+          </div>
+
+          <div class="security-note">
+            GitHub's repository Contents API is used for uploads.
+            The API expects Base64-encoded file contents and a
+            write-capable Contents permission. :contentReference[oaicite:1]{index=1}
+          </div>
+
+        </section>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- =======================================================
+       TOAST
+  ======================================================== -->
+
+  <div id="toast"></div>
 
 
   <script>
+    /* =========================================================
+       ANDRES PEPPA™ JAVASCRIPT
+    ========================================================= */
 
-    /* =========================
+
+    /* =========================================================
        ELEMENTS
-    ========================= */
+    ========================================================= */
 
     const playButton =
       document.getElementById("playButton");
@@ -671,6 +1883,18 @@
     const loadStatus =
       document.getElementById("loadStatus");
 
+    const musicStatus =
+      document.getElementById("musicStatus");
+
+    const pauseBadge =
+      document.getElementById("pauseBadge");
+
+    const caption =
+      document.getElementById("caption");
+
+    const goofyFlash =
+      document.getElementById("goofyFlash");
+
     const errorBox =
       document.getElementById("error");
 
@@ -689,30 +1913,103 @@
     ];
 
 
-    /* =========================
+    /* =========================================================
+       DEV ELEMENTS
+    ========================================================= */
+
+    const devOverlay =
+      document.getElementById("devOverlay");
+
+    const devClose =
+      document.getElementById("devClose");
+
+    const repoOwner =
+      document.getElementById("repoOwner");
+
+    const repoName =
+      document.getElementById("repoName");
+
+    const repoBranch =
+      document.getElementById("repoBranch");
+
+    const githubToken =
+      document.getElementById("githubToken");
+
+    const testToken =
+      document.getElementById("testToken");
+
+    const clearToken =
+      document.getElementById("clearToken");
+
+    const fileDrop =
+      document.getElementById("fileDrop");
+
+    const pictureInput =
+      document.getElementById("pictureInput");
+
+    const fileList =
+      document.getElementById("fileList");
+
+    const uploadButton =
+      document.getElementById("uploadButton");
+
+    const clearFiles =
+      document.getElementById("clearFiles");
+
+    const devStatus =
+      document.getElementById("devStatus");
+
+    const progressBar =
+      document.getElementById("progressBar");
+
+    const devLog =
+      document.getElementById("devLog");
+
+    const toast =
+      document.getElementById("toast");
+
+
+    /* =========================================================
        SETTINGS
-    ========================= */
+    ========================================================= */
 
     /*
-      How long each image remains
-      completely still before the
-      next cube transition begins.
-
-      5000 = 5 seconds
-      10000 = 10 seconds
-      etc.
+      Image stays completely still for 5 seconds.
     */
 
     const SLIDE_TIME = 5000;
 
 
     /*
-      EXACT cube transition duration.
-
-      3.6 seconds.
+      Cube animation lasts 3.6 seconds.
     */
 
     const CUBE_TIME = 3600;
+
+
+    /*
+      Secret dev code.
+
+      Each key must be pressed within
+      DEV_KEY_INTERVAL milliseconds
+      of the previous key.
+    */
+
+    const DEV_CODE = "10010";
+
+    const DEV_KEY_INTERVAL = 500;
+
+
+    /*
+      Maximum individual upload size.
+
+      The GitHub Contents API is not intended to be a
+      giant-file upload service, so keeping this reasonable
+      makes the browser experience much safer.
+    */
+
+    const MAX_FILE_SIZE =
+      20 * 1024 * 1024;
 
 
     /*
@@ -731,9 +2028,55 @@
     ];
 
 
-    /* =========================
+    /*
+      GitHub API version.
+    */
+
+    const GITHUB_API_VERSION =
+      "2026-03-10";
+
+
+    /*
+      Goofy captions.
+    */
+
+    const GOOFY_CAPTIONS = [
+      "📸 Evidence has been documented.",
+      "🗿 This image has aura.",
+      "🚨 The authorities have been notified.",
+      "🧍 Nobody knows why this exists.",
+      "💀 Absolutely devastating.",
+      "📞 Why is the hotline bling?",
+      "🦧 This was approved by management.",
+      "🧠 Brain loading... please wait.",
+      "🍳 Certified image.",
+      "👁️ Someone is watching the slideshow.",
+      "📡 Signal acquired. Unfortunately.",
+      "🫡 Thank you for your service.",
+      "💅 Extremely professional.",
+      "🏃 The next image is approaching.",
+      "🎬 Cinema.",
+      "🤨 Interesting.",
+      "🚪 There is no going back.",
+      "🗣️ WHO LET HIM COOK?",
+      "📋 Added to the historical record.",
+      "🦆 Quack.",
+      "💯 This is probably fine.",
+      "🧌 Goblin approved.",
+      "🌚 The image knows what you did.",
+      "📞 Hello? Yes. It's me again.",
+      "🫥 Nothing to see here.",
+      "🏆 Image of the year. Probably.",
+      "🥶 Cold-blooded slideshow behavior.",
+      "🧃 Juice acquired.",
+      "🧍‍♂️ Standing here dramatically.",
+      "🧎 We have reached peak Peppa."
+    ];
+
+
+    /* =========================================================
        VARIABLES
-    ========================= */
+    ========================================================= */
 
     let pictures = [];
 
@@ -743,14 +2086,233 @@
 
     let slideshowTimer = null;
 
-    let loadedCount = 0;
-
     let isTransitioning = false;
 
+    let isPaused = false;
 
-    /* =========================
+    let musicPlaying = false;
+
+    let selectedFiles = [];
+
+    let detectedRepo = null;
+
+    let githubTokenValue = "";
+
+    let toastTimer = null;
+
+    let goofyTimer = null;
+
+
+    /* =========================================================
+       SECRET DEV CODE
+       
+       This listener runs globally, meaning the code can be
+       entered on the start screen, slideshow, error screen,
+       etc.
+    ========================================================= */
+
+    let devSequence = "";
+
+    let lastDevKeyTime = 0;
+
+    document.addEventListener("keydown", event => {
+
+      /*
+        Don't let the dev sequence interfere with typing
+        into actual form fields.
+      */
+
+      const tag =
+        event.target.tagName;
+
+      if (
+        tag === "INPUT" ||
+        tag === "TEXTAREA" ||
+        tag === "SELECT"
+      ) {
+        return;
+      }
+
+
+      const now =
+        Date.now();
+
+
+      /*
+        If more than 500ms passed, restart.
+      */
+
+      if (
+        lastDevKeyTime !== 0 &&
+        now - lastDevKeyTime > DEV_KEY_INTERVAL
+      ) {
+        devSequence = "";
+      }
+
+
+      /*
+        Only accept numeric keys.
+      */
+
+      if (/^[0-9]$/.test(event.key)) {
+
+        devSequence += event.key;
+
+        /*
+          Keep the sequence manageable.
+        */
+
+        if (
+          devSequence.length >
+          DEV_CODE.length
+        ) {
+          devSequence =
+            devSequence.slice(-DEV_CODE.length);
+        }
+
+
+        /*
+          Correct code.
+        */
+
+        if (devSequence === DEV_CODE) {
+
+          devSequence = "";
+
+          lastDevKeyTime = 0;
+
+          openDevPanel();
+
+          return;
+        }
+
+
+        /*
+          If the currently typed sequence is not a prefix
+          of the secret code, restart intelligently.
+        */
+
+        if (
+          !DEV_CODE.startsWith(devSequence)
+        ) {
+
+          if (event.key === DEV_CODE[0]) {
+            devSequence = event.key;
+          } else {
+            devSequence = "";
+          }
+
+        }
+
+      }
+
+
+      lastDevKeyTime = now;
+
+    });
+
+
+    /* =========================================================
+       TOAST
+    ========================================================= */
+
+    function showToast(message) {
+
+      toast.textContent =
+        message;
+
+      toast.classList.add("show");
+
+
+      clearTimeout(toastTimer);
+
+
+      toastTimer =
+        setTimeout(() => {
+
+          toast.classList.remove("show");
+
+        }, 2800);
+
+    }
+
+
+    /* =========================================================
+       DEV LOG
+    ========================================================= */
+
+    function devLogMessage(
+      message,
+      type = "info"
+    ) {
+
+      const line =
+        document.createElement("div");
+
+      line.className =
+        type;
+
+      const time =
+        new Date().toLocaleTimeString();
+
+      line.textContent =
+        `[${time}] ${message}`;
+
+      devLog.appendChild(line);
+
+      devLog.scrollTop =
+        devLog.scrollHeight;
+
+    }
+
+
+    /* =========================================================
+       DEV PANEL
+    ========================================================= */
+
+    function openDevPanel() {
+
+      devOverlay.classList.add("open");
+
+      document.body.style.overflow =
+        "auto";
+
+
+      detectRepositoryForDev();
+
+
+      showToast(
+        "🧪 DEV MODE UNLOCKED. Uh oh."
+      );
+
+
+      devLogMessage(
+        "Secret code accepted. Welcome, developer.",
+        "success"
+      );
+
+    }
+
+
+    function closeDevPanel() {
+
+      devOverlay.classList.remove("open");
+
+      document.body.style.overflow =
+        "hidden";
+
+    }
+
+
+    devClose.addEventListener(
+      "click",
+      closeDevPanel
+    );
+
+
+    /* =========================================================
        FIND GITHUB REPOSITORY
-    ========================= */
+    ========================================================= */
 
     function getRepositoryInfo() {
 
@@ -763,10 +2325,12 @@
           .filter(Boolean);
 
 
-      if (!hostname.endsWith(".github.io")) {
+      if (
+        !hostname.endsWith(".github.io")
+      ) {
 
         throw new Error(
-          "This slideshow needs to be opened through GitHub Pages."
+          "This site must be running through GitHub Pages."
         );
 
       }
@@ -779,13 +2343,29 @@
       let repo;
 
 
-      if (path.length > 0) {
+      /*
+        User/organization GitHub Pages:
+          owner.github.io
+        Repository:
+          owner.github.io
+      */
 
-        repo = path[0];
+      if (
+        hostname ===
+        `${owner}.github.io`
+      ) {
+
+        if (path.length > 0) {
+          repo = path[0];
+        } else {
+          repo = `${owner}.github.io`;
+        }
 
       } else {
 
-        repo = `${owner}.github.io`;
+        repo =
+          path[0] ||
+          `${owner}.github.io`;
 
       }
 
@@ -798,17 +2378,15 @@
     }
 
 
-    /* =========================
-       FIND GITHUB PAGES BASE PATH
-    ========================= */
-
     function getBasePath() {
 
-      let pathname =
+      const pathname =
         window.location.pathname;
 
 
-      if (pathname.endsWith("/")) {
+      if (
+        pathname.endsWith("/")
+      ) {
 
         return pathname;
 
@@ -820,9 +2398,7 @@
 
 
       if (lastSlash === -1) {
-
         return "/";
-
       }
 
 
@@ -834,9 +2410,108 @@
     }
 
 
-    /* =========================
-       CHECK IMAGE
-    ========================= */
+    /* =========================================================
+       DEV REPOSITORY DETECTION
+    ========================================================= */
+
+    async function detectRepositoryForDev() {
+
+      try {
+
+        const info =
+          getRepositoryInfo();
+
+
+        detectedRepo = {
+          owner: info.owner,
+          repo: info.repo,
+          branch: "detecting..."
+        };
+
+
+        repoOwner.textContent =
+          info.owner;
+
+        repoName.textContent =
+          info.repo;
+
+
+        devLogMessage(
+          `Detected ${info.owner}/${info.repo}`,
+          "success"
+        );
+
+
+        /*
+          Ask GitHub for repository information.
+
+          Public repository metadata can be read without
+          authentication.
+        */
+
+        const response =
+          await fetch(
+            `https://api.github.com/repos/${encodeURIComponent(info.owner)}/${encodeURIComponent(info.repo)}`
+          );
+
+
+        if (
+          response.ok
+        ) {
+
+          const data =
+            await response.json();
+
+
+          detectedRepo.branch =
+            data.default_branch ||
+            "main";
+
+
+          repoBranch.textContent =
+            detectedRepo.branch;
+
+
+          devLogMessage(
+            `Default branch: ${detectedRepo.branch}`,
+            "info"
+          );
+
+        } else {
+
+          detectedRepo.branch =
+            "main";
+
+          repoBranch.textContent =
+            "main";
+
+        }
+
+      } catch (error) {
+
+        repoOwner.textContent =
+          "unknown";
+
+        repoName.textContent =
+          "unknown";
+
+        repoBranch.textContent =
+          "unknown";
+
+
+        devLogMessage(
+          error.message,
+          "error"
+        );
+
+      }
+
+    }
+
+
+    /* =========================================================
+       IMAGE CHECKING
+    ========================================================= */
 
     function isImageFile(name) {
 
@@ -852,9 +2527,9 @@
     }
 
 
-    /* =========================
-       LOAD EVERYTHING FROM PICS
-    ========================= */
+    /* =========================================================
+       LOAD PICTURES FROM GITHUB
+    ========================================================= */
 
     async function getPictures() {
 
@@ -865,11 +2540,11 @@
 
 
       const apiURL =
-        `https://api.github.com/repos/${owner}/${repo}/git/trees/HEAD?recursive=1`;
+        `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/git/trees/HEAD?recursive=1`;
 
 
       loadStatus.textContent =
-        "Finding pictures...";
+        "🔎 Finding pictures";
 
 
       const response =
@@ -878,26 +2553,30 @@
 
       if (!response.ok) {
 
-        if (response.status === 404) {
+        if (
+          response.status === 404
+        ) {
 
           throw new Error(
-            `GitHub could not find the repository "${owner}/${repo}".`
+            `GitHub could not find "${owner}/${repo}".`
           );
 
         }
 
 
-        if (response.status === 403) {
+        if (
+          response.status === 403
+        ) {
 
           throw new Error(
-            "GitHub API rate limit reached. Please try again later."
+            "GitHub API rate limit reached. Try again later."
           );
 
         }
 
 
         throw new Error(
-          `GitHub couldn't access the repository. Error ${response.status}.`
+          `GitHub returned error ${response.status}.`
         );
 
       }
@@ -916,45 +2595,33 @@
       }
 
 
-      /*
-        Find every image underneath
-        the pics folder.
-      */
-
       const imageFiles =
         data.tree.filter(file => {
 
-          if (file.type !== "blob") {
-
+          if (
+            file.type !== "blob"
+          ) {
             return false;
-
           }
 
 
-          if (!file.path.startsWith("pics/")) {
-
+          if (
+            !file.path.startsWith("pics/")
+          ) {
             return false;
-
           }
 
 
-          return isImageFile(file.path);
+          return isImageFile(
+            file.path
+          );
 
         });
 
 
-      /*
-        Find the GitHub Pages base path.
-      */
-
       const basePath =
         getBasePath();
 
-
-      /*
-        Turn repository paths into
-        real browser URLs.
-      */
 
       pictures =
         imageFiles.map(file => {
@@ -977,10 +2644,6 @@
         });
 
 
-      /*
-        Natural sorting.
-      */
-
       pictures.sort(
         (a, b) =>
           a.localeCompare(
@@ -994,29 +2657,30 @@
       );
 
 
-      if (pictures.length === 0) {
+      if (
+        pictures.length === 0
+      ) {
 
         throw new Error(
-          "No supported images were found inside the pics folder."
+          "No supported images were found inside /pics/."
         );
 
       }
 
 
       loadStatus.textContent =
-        `${pictures.length} pictures found`;
+        `📸 ${pictures.length} pictures found`;
 
     }
 
 
-    /* =========================
-       PRELOAD ALL IMAGES
-    ========================= */
+    /* =========================================================
+       PRELOAD IMAGES
+    ========================================================= */
 
     async function preloadImages() {
 
-      loadedCount = 0;
-
+      let loadedCount = 0;
 
       const validPictures = [];
 
@@ -1036,8 +2700,10 @@
 
               validPictures.push(url);
 
-              loading.textContent =
+
+              loading.innerHTML =
                 `Loading pictures... ${loadedCount} / ${pictures.length}`;
+
 
               resolve();
 
@@ -1047,21 +2713,25 @@
             image.onerror = () => {
 
               console.warn(
-                "Couldn't load image:",
+                "Couldn't load:",
                 url
               );
 
+
               loadedCount++;
 
-              loading.textContent =
+
+              loading.innerHTML =
                 `Loading pictures... ${loadedCount} / ${pictures.length}`;
+
 
               resolve();
 
             };
 
 
-            image.src = url;
+            image.src =
+              url;
 
           });
 
@@ -1075,124 +2745,92 @@
         validPictures;
 
 
-      if (pictures.length === 0) {
+      if (
+        pictures.length === 0
+      ) {
 
         throw new Error(
-          "The pics folder was found, but none of the images could be loaded."
+          "Pictures were found, but none could be loaded."
         );
 
       }
 
 
       loadStatus.textContent =
-        `${pictures.length} pictures loaded`;
+        `📸 ${pictures.length} pictures loaded`;
 
     }
 
 
-    /* =========================
-       RESET SLIDE CLASSES
-    ========================= */
+    /* =========================================================
+       RESET ANIMATIONS
+    ========================================================= */
 
     function resetSlideAnimations() {
 
-      slideElements.forEach(slide => {
+      slideElements.forEach(
+        slide => {
 
-        slide.classList.remove(
-          "cube-out-right",
-          "cube-in-right",
-          "cube-out-left",
-          "cube-in-left",
-          "cube-shadow-out",
-          "cube-shadow-in"
-        );
+          slide.classList.remove(
+            "cube-out-right",
+            "cube-in-right",
+            "cube-out-left",
+            "cube-in-left",
+            "cube-shadow-out",
+            "cube-shadow-in"
+          );
 
-      });
+        }
+      );
 
     }
 
 
-    /* =========================
-       SHOW IMAGE WITH CUBE
-    ========================= */
+    /* =========================================================
+       SHOW IMAGE
+    ========================================================= */
 
     function showImage(
       index,
       direction = "right"
     ) {
 
-      if (pictures.length === 0) {
-
+      if (
+        pictures.length === 0 ||
+        isTransitioning ||
+        index === current
+      ) {
         return;
-
-      }
-
-
-      if (isTransitioning) {
-
-        return;
-
-      }
-
-
-      if (index === current && activeSlide === 0) {
-
-        return;
-
       }
 
 
       isTransitioning = true;
 
 
-      /*
-        Which of the two physical
-        slide elements will become
-        the incoming image?
-      */
-
       const outgoingSlide =
         slideElements[activeSlide];
 
 
+      const incomingIndex =
+        activeSlide === 0
+          ? 1
+          : 0;
+
+
       const incomingSlide =
-        slideElements[
-          activeSlide === 0
-            ? 1
-            : 0
-        ];
+        slideElements[incomingIndex];
 
 
       const incomingImage =
-        slideImages[
-          activeSlide === 0
-            ? 1
-            : 0
-        ];
+        slideImages[incomingIndex];
 
-
-      /*
-        Put the next image into the
-        incoming slide before the
-        animation begins.
-      */
 
       incomingImage.src =
         pictures[index];
 
 
-      /*
-        Make sure the old animation
-        classes are gone.
-      */
-
       resetSlideAnimations();
 
-
-      /*
-        Make the incoming slide visible
-        behind the outgoing one.
-      */
 
       incomingSlide.style.opacity =
         "1";
@@ -1204,20 +2842,9 @@
         "2";
 
 
-      /*
-        Determine which direction
-        the cube rotates.
-
-        Right:
-          old image rotates left
-          new image rotates in from right.
-
-        Left:
-          old image rotates right
-          new image rotates in from left.
-      */
-
-      if (direction === "right") {
+      if (
+        direction === "right"
+      ) {
 
         outgoingSlide.classList.add(
           "cube-out-right",
@@ -1244,10 +2871,6 @@
       }
 
 
-      /*
-        Update the current image.
-      */
-
       current =
         index;
 
@@ -1256,48 +2879,29 @@
         `${current + 1} / ${pictures.length}`;
 
 
-      /*
-        Wait for the complete
-        3.6 second cube animation.
-      */
+      showRandomCaption();
+
 
       setTimeout(() => {
-
-        /*
-          Remove animation classes.
-        */
 
         resetSlideAnimations();
 
 
-        /*
-          The incoming slide is now
-          the active slide.
-        */
-
         activeSlide =
-          activeSlide === 0
-            ? 1
-            : 0;
+          incomingIndex;
 
 
-        /*
-          Make sure the new slide
-          is fully visible.
-        */
-
-        slideElements[activeSlide]
-          .style
-          .opacity = "1";
-
-        slideElements[activeSlide]
-          .style
-          .zIndex = "2";
+        slideElements[
+          activeSlide
+        ].style.opacity =
+          "1";
 
 
-        /*
-          Hide the old slide.
-        */
+        slideElements[
+          activeSlide
+        ].style.zIndex =
+          "2";
+
 
         const oldSlide =
           slideElements[
@@ -1314,10 +2918,6 @@
           "1";
 
 
-        /*
-          Allow the next transition.
-        */
-
         isTransitioning =
           false;
 
@@ -1326,23 +2926,18 @@
     }
 
 
-    /* =========================
-       NEXT IMAGE
-    ========================= */
+    /* =========================================================
+       NEXT / PREVIOUS
+    ========================================================= */
 
     function nextSlide() {
 
-      if (pictures.length === 0) {
-
+      if (
+        pictures.length === 0 ||
+        isTransitioning ||
+        isPaused
+      ) {
         return;
-
-      }
-
-
-      if (isTransitioning) {
-
-        return;
-
       }
 
 
@@ -1350,10 +2945,10 @@
         current + 1;
 
 
-      if (next >= pictures.length) {
-
+      if (
+        next >= pictures.length
+      ) {
         next = 0;
-
       }
 
 
@@ -1365,23 +2960,13 @@
     }
 
 
-    /* =========================
-       PREVIOUS IMAGE
-    ========================= */
-
     function previousSlide() {
 
-      if (pictures.length === 0) {
-
+      if (
+        pictures.length === 0 ||
+        isTransitioning
+      ) {
         return;
-
-      }
-
-
-      if (isTransitioning) {
-
-        return;
-
       }
 
 
@@ -1389,7 +2974,9 @@
         current - 1;
 
 
-      if (previous < 0) {
+      if (
+        previous < 0
+      ) {
 
         previous =
           pictures.length - 1;
@@ -1405,13 +2992,15 @@
     }
 
 
-    /* =========================
-       START SLIDESHOW TIMER
-    ========================= */
+    /* =========================================================
+       SLIDESHOW TIMER
+    ========================================================= */
 
     function startSlideshow() {
 
-      if (slideshowTimer) {
+      if (
+        slideshowTimer
+      ) {
 
         clearTimeout(
           slideshowTimer
@@ -1420,39 +3009,40 @@
       }
 
 
-      /*
-        Use setTimeout instead of
-        setInterval.
-
-        This prevents the timer from
-        starting another transition
-        while the 3.6-second cube
-        animation is still running.
-      */
-
       function scheduleNext() {
+
+        if (
+          isPaused
+        ) {
+          return;
+        }
+
 
         slideshowTimer =
           setTimeout(() => {
 
             nextSlide();
 
-            /*
-              Wait until the cube is
-              completely finished before
-              scheduling the next image.
-            */
 
             const waitForTransition =
               setInterval(() => {
 
-                if (!isTransitioning) {
+                if (
+                  !isTransitioning
+                ) {
 
                   clearInterval(
                     waitForTransition
                   );
 
-                  scheduleNext();
+
+                  if (
+                    !isPaused
+                  ) {
+
+                    scheduleNext();
+
+                  }
 
                 }
 
@@ -1468,17 +3058,343 @@
     }
 
 
-    /* =========================
+    /* =========================================================
+       PAUSE / RESUME
+    ========================================================= */
+
+    function togglePause() {
+
+      isPaused =
+        !isPaused;
+
+
+      if (
+        isPaused
+      ) {
+
+        if (
+          slideshowTimer
+        ) {
+
+          clearTimeout(
+            slideshowTimer
+          );
+
+        }
+
+
+        pauseBadge.style.display =
+          "block";
+
+
+        showToast(
+          "⏸ Paused. The nonsense is temporarily contained."
+        );
+
+      } else {
+
+        pauseBadge.style.display =
+          "none";
+
+
+        startSlideshow();
+
+
+        showToast(
+          "▶ Resumed. Bad decisions continue."
+        );
+
+      }
+
+    }
+
+
+    /* =========================================================
+       RANDOM GOOFY CAPTION
+    ========================================================= */
+
+    function showRandomCaption() {
+
+      const text =
+        GOOFY_CAPTIONS[
+          Math.floor(
+            Math.random() *
+            GOOFY_CAPTIONS.length
+          )
+        ];
+
+
+      caption.textContent =
+        text;
+
+
+      caption.classList.add(
+        "show"
+      );
+
+
+      clearTimeout(
+        goofyTimer
+      );
+
+
+      goofyTimer =
+        setTimeout(() => {
+
+          caption.classList.remove(
+            "show"
+          );
+
+        }, 1800);
+
+    }
+
+
+    /* =========================================================
+       RANDOM GOOFY FLASH
+    ========================================================= */
+
+    function goofyFlashMoment() {
+
+      if (
+        isPaused ||
+        pictures.length === 0
+      ) {
+        return;
+      }
+
+
+      const messages = [
+        "PEPPA.",
+        "WHAT.",
+        "BRUH.",
+        "HELLO???",
+        "CINEMA.",
+        "NO WAY.",
+        "WHY.",
+        "LMAO.",
+        "ANDRES???",
+        "🗿",
+        "📞",
+        "REAL.",
+        "PEAK.",
+        "STOP.",
+        "CONTINUE."
+      ];
+
+
+      goofyFlash.textContent =
+        messages[
+          Math.floor(
+            Math.random() *
+            messages.length
+          )
+        ];
+
+
+      goofyFlash.classList.add(
+        "show"
+      );
+
+
+      setTimeout(() => {
+
+        goofyFlash.classList.remove(
+          "show"
+        );
+
+      }, 450);
+
+    }
+
+
+    function scheduleGoofyFlash() {
+
+      const delay =
+        12000 +
+        Math.random() *
+        22000;
+
+
+      setTimeout(() => {
+
+        goofyFlashMoment();
+
+        scheduleGoofyFlash();
+
+      }, delay);
+
+    }
+
+
+    /* =========================================================
+       MUFFLED MUSIC
+       
+       Uses Web Audio to make the supplied bgm.mp3 sound like
+       it is being played through a suspiciously bad speaker.
+    ========================================================= */
+
+    let audioContext = null;
+
+    let musicFilter = null;
+
+    let musicCompressor = null;
+
+    let musicSource = null;
+
+    let musicGain = null;
+
+
+    async function setupMuffledMusic() {
+
+      try {
+
+        if (
+          !audioContext
+        ) {
+
+          audioContext =
+            new (
+              window.AudioContext ||
+              window.webkitAudioContext
+            )();
+
+
+          musicSource =
+            audioContext.createMediaElementSource(
+              bgm
+            );
+
+
+          musicFilter =
+            audioContext.createBiquadFilter();
+
+
+          musicCompressor =
+            audioContext.createDynamicsCompressor();
+
+
+          musicGain =
+            audioContext.createGain();
+
+
+          /*
+            Phone-speaker-ish effect:
+            cut lows, cut highs, push mids.
+          */
+
+          musicFilter.type =
+            "bandpass";
+
+          musicFilter.frequency.value =
+            850;
+
+          musicFilter.Q.value =
+            0.65;
+
+
+          musicCompressor.threshold.value =
+            -28;
+
+          musicCompressor.knee.value =
+            20;
+
+          musicCompressor.ratio.value =
+            7;
+
+          musicCompressor.attack.value =
+            0.005;
+
+          musicCompressor.release.value =
+            0.12;
+
+
+          musicGain.gain.value =
+            0.38;
+
+
+          musicSource
+            .connect(musicFilter)
+            .connect(musicCompressor)
+            .connect(musicGain)
+            .connect(audioContext.destination);
+
+        }
+
+
+        if (
+          audioContext.state ===
+          "suspended"
+        ) {
+
+          await audioContext.resume();
+
+        }
+
+
+        bgm.volume =
+          0.9;
+
+
+        await bgm.play();
+
+
+        musicPlaying =
+          true;
+
+
+        musicStatus.textContent =
+          "🎵 hotline machinery: ON";
+
+      } catch (error) {
+
+        console.warn(
+          "Music failed:",
+          error
+        );
+
+
+        musicStatus.textContent =
+          "🔇 music: browser said no";
+
+        musicPlaying =
+          false;
+
+      }
+
+    }
+
+
+    async function toggleMusic() {
+
+      if (
+        bgm.paused
+      ) {
+
+        await setupMuffledMusic();
+
+      } else {
+
+        bgm.pause();
+
+        musicPlaying =
+          false;
+
+        musicStatus.textContent =
+          "🔇 hotline machinery: OFF";
+
+      }
+
+    }
+
+
+    /* =========================================================
        START
-    ========================= */
+    ========================================================= */
 
     async function start() {
 
       try {
-
-        /*
-          Disable button while loading.
-        */
 
         playButton.style.display =
           "none";
@@ -1490,42 +3406,22 @@
           "none";
 
 
-        /*
-          Find images.
-        */
-
         await getPictures();
 
 
-        /*
-          Preload images.
-        */
-
         await preloadImages();
 
-
-        /*
-          Start at image #1.
-        */
 
         current = 0;
 
         activeSlide = 0;
 
+        isPaused = false;
 
-        /*
-          Put first image on
-          first slide.
-        */
 
         slideImages[0].src =
           pictures[0];
 
-
-        /*
-          Preload second image
-          into second slide.
-        */
 
         slideImages[1].src =
           pictures[
@@ -1535,90 +3431,58 @@
           ];
 
 
-        /*
-          First slide visible.
-        */
-
         slideElements[0]
-          .classList
-          .add("active");
+          .style
+          .opacity =
+          "1";
 
 
         slideElements[0]
           .style
-          .opacity = "1";
-
-
-        slideElements[0]
-          .style
-          .zIndex = "2";
-
-
-        slideElements[1]
-          .classList
-          .remove("active");
+          .zIndex =
+          "2";
 
 
         slideElements[1]
           .style
-          .opacity = "0";
+          .opacity =
+          "0";
 
 
         slideElements[1]
           .style
-          .zIndex = "1";
+          .zIndex =
+          "1";
 
-
-        /*
-          Counter.
-        */
 
         counter.textContent =
           `1 / ${pictures.length}`;
 
 
-        /*
-          Start music.
-        */
-
-        bgm.currentTime = 0;
-
-
-        try {
-
-          await bgm.play();
-
-        } catch (audioError) {
-
-          console.warn(
-            "Music couldn't autoplay:",
-            audioError
-          );
-
-        }
+        showRandomCaption();
 
 
         /*
-          Hide start screen.
+          User clicked the button, so audio playback
+          is allowed by the browser.
         */
+
+        await setupMuffledMusic();
+
 
         startScreen.style.display =
           "none";
 
 
-        /*
-          Show slideshow.
-        */
-
         slideshow.style.display =
           "block";
 
 
-        /*
-          Start slideshow.
-        */
-
         startSlideshow();
+
+
+        scheduleGoofyFlash();
+
 
       } catch (error) {
 
@@ -1644,26 +3508,15 @@
           error.message;
 
 
-        if (pictures.length > 0) {
-
-          errorURL.textContent =
-            pictures[0];
-
-        } else {
-
-          errorURL.textContent =
-            "";
-
-        }
+        errorURL.textContent =
+          pictures.length > 0
+            ? pictures[0]
+            : "";
 
       }
 
     }
 
-
-    /* =========================
-       PLAY BUTTON
-    ========================= */
 
     playButton.addEventListener(
       "click",
@@ -1671,42 +3524,57 @@
     );
 
 
-    /* =========================
-       PREVENT IMAGE DRAGGING
-    ========================= */
+    /* =========================================================
+       IMAGE DRAG PREVENTION
+    ========================================================= */
 
-    slideImages.forEach(image => {
+    slideImages.forEach(
+      image => {
 
-      image.addEventListener(
-        "dragstart",
-        event => {
+        image.addEventListener(
+          "dragstart",
+          event => {
 
-          event.preventDefault();
+            event.preventDefault();
 
-        }
-      );
+          }
+        );
 
-    });
+      }
+    );
 
 
-    /* =========================
+    /* =========================================================
        KEYBOARD CONTROLS
-    ========================= */
+    ========================================================= */
 
     document.addEventListener(
       "keydown",
       event => {
 
         /*
-          Left arrow.
+          Don't run slideshow shortcuts while typing
+          in the dev panel.
         */
 
+        const tag =
+          event.target.tagName;
+
         if (
-          event.key === "ArrowLeft" &&
-          pictures.length > 0
+          tag === "INPUT" ||
+          tag === "TEXTAREA"
+        ) {
+          return;
+        }
+
+
+        if (
+          event.key === "ArrowLeft"
         ) {
 
-          if (slideshowTimer) {
+          if (
+            slideshowTimer
+          ) {
 
             clearTimeout(
               slideshowTimer
@@ -1720,16 +3588,13 @@
         }
 
 
-        /*
-          Right arrow.
-        */
-
         if (
-          event.key === "ArrowRight" &&
-          pictures.length > 0
+          event.key === "ArrowRight"
         ) {
 
-          if (slideshowTimer) {
+          if (
+            slideshowTimer
+          ) {
 
             clearTimeout(
               slideshowTimer
@@ -1742,7 +3607,1031 @@
 
         }
 
+
+        if (
+          event.code === "Space"
+        ) {
+
+          event.preventDefault();
+
+          if (
+            slideshow.style.display ===
+            "block"
+          ) {
+
+            togglePause();
+
+          }
+
+        }
+
+
+        if (
+          event.key.toLowerCase() === "m"
+        ) {
+
+          if (
+            slideshow.style.display ===
+            "block"
+          ) {
+
+            toggleMusic();
+
+          }
+
+        }
+
+
+        if (
+          event.key === "Escape" &&
+          devOverlay.classList.contains(
+            "open"
+          )
+        ) {
+
+          closeDevPanel();
+
+        }
+
       }
+    );
+
+
+    /* =========================================================
+       FILE HANDLING
+    ========================================================= */
+
+    pictureInput.addEventListener(
+      "change",
+      event => {
+
+        addFiles(
+          Array.from(
+            event.target.files
+          )
+        );
+
+      }
+    );
+
+
+    function addFiles(files) {
+
+      const accepted = [];
+
+
+      for (
+        const file of files
+      ) {
+
+        if (
+          !file.type.startsWith("image/")
+        ) {
+
+          showToast(
+            `❌ ${file.name} isn't an image.`
+          );
+
+          continue;
+
+        }
+
+
+        if (
+          file.size >
+          MAX_FILE_SIZE
+        ) {
+
+          showToast(
+            `❌ ${file.name} is larger than 20 MB.`
+          );
+
+          continue;
+
+        }
+
+
+        accepted.push(file);
+
+      }
+
+
+      selectedFiles =
+        selectedFiles.concat(
+          accepted
+        );
+
+
+      renderFileList();
+
+    }
+
+
+    function renderFileList() {
+
+      fileList.innerHTML =
+        "";
+
+
+      selectedFiles.forEach(
+        (file, index) => {
+
+          const row =
+            document.createElement("div");
+
+          row.className =
+            "file-row";
+
+
+          const name =
+            document.createElement("div");
+
+          name.className =
+            "file-name";
+
+          name.textContent =
+            `${index + 1}. ${file.name}`;
+
+
+          const size =
+            document.createElement("div");
+
+          size.className =
+            "file-size";
+
+          size.textContent =
+            formatBytes(
+              file.size
+            );
+
+
+          row.appendChild(name);
+
+          row.appendChild(size);
+
+          fileList.appendChild(row);
+
+        }
+      );
+
+
+      uploadButton.disabled =
+        selectedFiles.length === 0;
+
+    }
+
+
+    function clearSelectedFiles() {
+
+      selectedFiles = [];
+
+      pictureInput.value =
+        "";
+
+      renderFileList();
+
+      progressBar.style.width =
+        "0%";
+
+      devStatus.textContent =
+        "Waiting for pictures...";
+
+    }
+
+
+    clearFiles.addEventListener(
+      "click",
+      clearSelectedFiles
+    );
+
+
+    /* =========================================================
+       DRAG AND DROP
+    ========================================================= */
+
+    [
+      "dragenter",
+      "dragover"
+    ].forEach(eventName => {
+
+      fileDrop.addEventListener(
+        eventName,
+        event => {
+
+          event.preventDefault();
+
+          fileDrop.classList.add(
+            "dragging"
+          );
+
+        }
+      );
+
+    });
+
+
+    [
+      "dragleave",
+      "drop"
+    ].forEach(eventName => {
+
+      fileDrop.addEventListener(
+        eventName,
+        event => {
+
+          event.preventDefault();
+
+          fileDrop.classList.remove(
+            "dragging"
+          );
+
+        }
+      );
+
+    });
+
+
+    fileDrop.addEventListener(
+      "drop",
+      event => {
+
+        addFiles(
+          Array.from(
+            event.dataTransfer.files
+          )
+        );
+
+      }
+    );
+
+
+    /* =========================================================
+       FORMAT BYTES
+    ========================================================= */
+
+    function formatBytes(bytes) {
+
+      if (
+        bytes === 0
+      ) {
+        return "0 B";
+      }
+
+
+      const units = [
+        "B",
+        "KB",
+        "MB",
+        "GB"
+      ];
+
+
+      const i =
+        Math.floor(
+          Math.log(bytes) /
+          Math.log(1024)
+        );
+
+
+      return (
+        (
+          bytes /
+          Math.pow(1024, i)
+        ).toFixed(i === 0 ? 0 : 1)
+        +
+        " "
+        +
+        units[i]
+      );
+
+    }
+
+
+    /* =========================================================
+       BASE64 FILE ENCODING
+       
+       FileReader is used instead of btoa(fileContents)
+       because binary image data cannot safely be passed
+       directly through btoa as a normal Unicode string.
+    ========================================================= */
+
+    function fileToBase64(file) {
+
+      return new Promise(
+        (resolve, reject) => {
+
+          const reader =
+            new FileReader();
+
+
+          reader.onload = () => {
+
+            try {
+
+              const result =
+                reader.result;
+
+
+              const base64 =
+                result.split(",")[1];
+
+
+              resolve(base64);
+
+            } catch (error) {
+
+              reject(error);
+
+            }
+
+          };
+
+
+          reader.onerror =
+            () => reject(
+              reader.error ||
+              new Error(
+                "Could not read file."
+              )
+            );
+
+
+          reader.readAsDataURL(
+            file
+          );
+
+        }
+      );
+
+    }
+
+
+    /* =========================================================
+       SANITIZE GITHUB FILENAME
+    ========================================================= */
+
+    function sanitizeFilename(
+      filename
+    ) {
+
+      /*
+        Keep the original extension,
+        but remove dangerous path characters.
+      */
+
+      let clean =
+        filename
+          .normalize("NFKC")
+          .replace(
+            /[\/\\?%*:|"<>]/g,
+            "-"
+          )
+          .replace(
+            /\s+/g,
+            " "
+          )
+          .trim();
+
+
+      /*
+        Prevent weird relative paths.
+      */
+
+      clean =
+        clean
+          .replace(
+            /^\.+/,
+            ""
+          )
+          .replace(
+            /\.+$/,
+            ""
+          );
+
+
+      if (
+        !clean
+      ) {
+
+        clean =
+          `picture-${Date.now()}.jpg`;
+
+      }
+
+
+      return clean;
+
+    }
+
+
+    /* =========================================================
+       GET GITHUB HEADERS
+    ========================================================= */
+
+    function githubHeaders() {
+
+      if (
+        !githubTokenValue
+      ) {
+
+        throw new Error(
+          "No GitHub token has been provided."
+        );
+
+      }
+
+
+      return {
+        "Accept":
+          "application/vnd.github+json",
+
+        "Authorization":
+          `Bearer ${githubTokenValue}`,
+
+        "X-GitHub-Api-Version":
+          GITHUB_API_VERSION
+      };
+
+    }
+
+
+    /* =========================================================
+       TEST GITHUB TOKEN
+    ========================================================= */
+
+    testToken.addEventListener(
+      "click",
+      async () => {
+
+        const token =
+          githubToken.value.trim();
+
+
+        if (
+          !token
+        ) {
+
+          showToast(
+            "🔑 You forgot the GitHub token."
+          );
+
+          return;
+
+        }
+
+
+        githubTokenValue =
+          token;
+
+
+        testToken.disabled =
+          true;
+
+
+        devStatus.textContent =
+          "Testing GitHub credentials...";
+
+
+        devLogMessage(
+          "Testing GitHub token...",
+          "info"
+        );
+
+
+        try {
+
+          const response =
+            await fetch(
+              "https://api.github.com/user",
+              {
+                headers:
+                  githubHeaders()
+              }
+            );
+
+
+          if (
+            !response.ok
+          ) {
+
+            throw new Error(
+              `GitHub rejected the token (${response.status}).`
+            );
+
+          }
+
+
+          const user =
+            await response.json();
+
+
+          devStatus.textContent =
+            `Connected as ${user.login}. Token accepted.`;
+
+
+          devLogMessage(
+            `Authenticated as ${user.login}.`,
+            "success"
+          );
+
+
+          showToast(
+            `✅ GitHub connected as ${user.login}`
+          );
+
+
+          uploadButton.disabled =
+            selectedFiles.length === 0;
+
+        } catch (error) {
+
+          githubTokenValue =
+            "";
+
+
+          devStatus.textContent =
+            error.message;
+
+
+          devLogMessage(
+            error.message,
+            "error"
+          );
+
+
+          showToast(
+            "❌ GitHub token test failed."
+          );
+
+        } finally {
+
+          testToken.disabled =
+            false;
+
+        }
+
+      }
+    );
+
+
+    /* =========================================================
+       CLEAR TOKEN
+    ========================================================= */
+
+    clearToken.addEventListener(
+      "click",
+      () => {
+
+        githubToken.value =
+          "";
+
+        githubTokenValue =
+          "";
+
+        devStatus.textContent =
+          "GitHub token cleared.";
+
+        uploadButton.disabled =
+          true;
+
+        devLogMessage(
+          "GitHub token cleared from memory.",
+          "info"
+        );
+
+        showToast(
+          "🗑 Token forgotten."
+        );
+
+      }
+    );
+
+
+    /* =========================================================
+       UPLOAD TO GITHUB
+       
+       GitHub's Contents API:
+         PUT /repos/{owner}/{repo}/contents/{path}
+
+       For a new file:
+         message
+         content
+         branch
+
+       For replacing an existing file:
+         sha is additionally required.
+    ========================================================= */
+
+    uploadButton.addEventListener(
+      "click",
+      uploadPictures
+    );
+
+
+    async function uploadPictures() {
+
+      if (
+        selectedFiles.length === 0
+      ) {
+
+        showToast(
+          "📸 Pick some pictures first."
+        );
+
+        return;
+
+      }
+
+
+      if (
+        !githubTokenValue
+      ) {
+
+        showToast(
+          "🔑 Test your GitHub token first."
+        );
+
+        return;
+
+      }
+
+
+      if (
+        !detectedRepo
+      ) {
+
+        await detectRepositoryForDev();
+
+      }
+
+
+      if (
+        !detectedRepo ||
+        !detectedRepo.owner ||
+        !detectedRepo.repo
+      ) {
+
+        showToast(
+          "❌ Couldn't figure out the repository."
+        );
+
+        return;
+
+      }
+
+
+      const confirmed =
+        confirm(
+          `Upload ${selectedFiles.length} picture(s) to ${detectedRepo.owner}/${detectedRepo.repo}/pics/?`
+        );
+
+
+      if (
+        !confirmed
+      ) {
+
+        return;
+
+      }
+
+
+      uploadButton.disabled =
+        true;
+
+      testToken.disabled =
+        true;
+
+
+      progressBar.style.width =
+        "0%";
+
+
+      devStatus.textContent =
+        "Preparing to commit pictures...";
+
+
+      devLogMessage(
+        `Starting upload of ${selectedFiles.length} file(s).`,
+        "info"
+      );
+
+
+      let successCount = 0;
+
+
+      try {
+
+        for (
+          let i = 0;
+          i < selectedFiles.length;
+          i++
+        ) {
+
+          const file =
+            selectedFiles[i];
+
+
+          devStatus.textContent =
+            `Uploading ${i + 1} / ${selectedFiles.length}: ${file.name}`;
+
+
+          devLogMessage(
+            `Reading ${file.name}...`,
+            "info"
+          );
+
+
+          const base64 =
+            await fileToBase64(
+              file
+            );
+
+
+          const safeName =
+            sanitizeFilename(
+              file.name
+            );
+
+
+          const path =
+            `pics/${safeName}`;
+
+
+          /*
+            Check whether the file already exists.
+
+            If it does, GitHub requires its blob SHA for
+            replacement.
+          */
+
+          let existingSha =
+            null;
+
+
+          const getURL =
+            `https://api.github.com/repos/${encodeURIComponent(detectedRepo.owner)}/${encodeURIComponent(detectedRepo.repo)}/contents/${path
+              .split("/")
+              .map(encodeURIComponent)
+              .join("/")}?ref=${encodeURIComponent(detectedRepo.branch || "main")}`;
+
+
+          const existingResponse =
+            await fetch(
+              getURL,
+              {
+                headers:
+                  githubHeaders()
+              }
+            );
+
+
+          if (
+            existingResponse.ok
+          ) {
+
+            const existing =
+              await existingResponse.json();
+
+
+            existingSha =
+              existing.sha;
+
+
+            devLogMessage(
+              `${safeName} already exists; replacing it.`,
+              "info"
+            );
+
+          } else if (
+            existingResponse.status !==
+            404
+          ) {
+
+            const errorBody =
+              await existingResponse.text();
+
+
+            throw new Error(
+              `Couldn't check ${safeName}: ${existingResponse.status} ${errorBody}`
+            );
+
+          }
+
+
+          /*
+            Create or replace the file.
+          */
+
+          const putURL =
+            `https://api.github.com/repos/${encodeURIComponent(detectedRepo.owner)}/${encodeURIComponent(detectedRepo.repo)}/contents/${path
+              .split("/")
+              .map(encodeURIComponent)
+              .join("/")}`;
+
+
+          const body = {
+            message:
+              `📸 Add ${safeName} to pics`,
+
+            content:
+              base64,
+
+            branch:
+              detectedRepo.branch ||
+              "main"
+          };
+
+
+          if (
+            existingSha
+          ) {
+
+            body.sha =
+              existingSha;
+
+          }
+
+
+          const response =
+            await fetch(
+              putURL,
+              {
+                method:
+                  "PUT",
+
+                headers: {
+                  ...githubHeaders(),
+
+                  "Content-Type":
+                    "application/json"
+                },
+
+                body:
+                  JSON.stringify(body)
+              }
+            );
+
+
+          if (
+            !response.ok
+          ) {
+
+            const errorBody =
+              await response.text();
+
+
+            throw new Error(
+              `GitHub rejected ${safeName}: ${response.status} ${errorBody}`
+            );
+
+          }
+
+
+          successCount++;
+
+
+          const percentage =
+            Math.round(
+              (
+                successCount /
+                selectedFiles.length
+              ) *
+              100
+            );
+
+
+          progressBar.style.width =
+            `${percentage}%`;
+
+
+          devLogMessage(
+            `✓ ${safeName} committed successfully.`,
+            "success"
+          );
+
+        }
+
+
+        devStatus.textContent =
+          `🎉 Done! ${successCount} picture(s) uploaded to /pics/.`;
+
+
+        devLogMessage(
+          "All uploads completed successfully.",
+          "success"
+        );
+
+
+        showToast(
+          `🎉 ${successCount} picture(s) uploaded!`
+        );
+
+
+        /*
+          Clear the selection after success.
+        */
+
+        clearSelectedFiles();
+
+
+      } catch (error) {
+
+        devStatus.textContent =
+          `Upload stopped: ${error.message}`;
+
+
+        devLogMessage(
+          error.message,
+          "error"
+        );
+
+
+        showToast(
+          "💀 Upload failed. Check the dev console."
+        );
+
+      } finally {
+
+        uploadButton.disabled =
+          selectedFiles.length === 0;
+
+        testToken.disabled =
+          false;
+
+      }
+
+    }
+
+
+    /* =========================================================
+       INITIAL DEV INFO
+    ========================================================= */
+
+    /*
+      Don't actually contact GitHub until the dev page is opened.
+      This keeps the normal visitor experience lightweight.
+    */
+
+
+    /* =========================================================
+       CLICKING OUTSIDE DEV WINDOW
+    ========================================================= */
+
+    devOverlay.addEventListener(
+      "click",
+      event => {
+
+        if (
+          event.target ===
+          devOverlay
+        ) {
+
+          closeDevPanel();
+
+        }
+
+      }
+    );
+
+
+    /* =========================================================
+       DOUBLE CLICK = GOOFY
+    ========================================================= */
+
+    document.addEventListener(
+      "dblclick",
+      () => {
+
+        if (
+          slideshow.style.display ===
+          "block"
+        ) {
+
+          goofyFlashMoment();
+
+        }
+
+      }
+    );
+
+
+    /* =========================================================
+       CONSOLE EASTER EGG
+    ========================================================= */
+
+    console.log(
+      "%cANDRES PEPPA™",
+      "font-size:30px;font-weight:900;color:#ff1744"
+    );
+
+    console.log(
+      "%cIf you are reading this, you are either a developer or extremely lost.",
+      "font-size:12px;color:#aaa"
+    );
+
+    console.log(
+      "%cThere is a secret dev code. You know what it is.",
+      "font-size:12px;color:#8b5cf6"
     );
 
   </script>
